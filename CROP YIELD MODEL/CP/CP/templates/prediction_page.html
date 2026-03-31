@@ -1,0 +1,68 @@
+{% extends 'base.html' %} {% block extra_head %}<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>{% endblock %} {% block content %}
+<section class="section-pad">
+  <div class="container workflow-detail-page">
+    <div class="workflow-page-head reveal-up">
+      <p class="workflow-kicker mb-2">Step 7</p>
+      <h1>Yield Prediction System</h1>
+      <p>Runtime inference pipeline from user input to yield output.</p>
+    </div>
+    <div class="card panel-card mb-4 reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-3">Prediction Pipeline</h2>
+        <div class="workflow-flow vertical">
+          User Input <span>↓</span> Data Preprocessing <span>↓</span> Feature
+          Encoding <span>↓</span> Model Inference <span>↓</span> Yield Output +
+          Explanation
+        </div>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card panel-card h-100 reveal-up">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Inputs Captured</h2>
+            <ul class="list-clean">
+              <li>State / District / Crop</li>
+              <li>Year, Rainfall, Temperature</li>
+              <li>Pesticides and Farm Area</li>
+              <li>Derived engineered variables via preprocessor</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card panel-card h-100 reveal-up">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Output Generated</h2>
+            <ul class="list-clean">
+              <li>Predicted Yield (t/ha and hg/ha)</li>
+              <li>Estimated Total Production</li>
+              <li>Agronomic insight factors</li>
+              <li>Relative yield rating</li>
+            </ul>
+            <a class="btn btn-success mt-2" href="{{ url_for('predict_page') }}"
+              >Open Live Predictor</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="workflow-nav mt-4">
+      <a
+        class="btn btn-outline-success"
+        href="{{ url_for('workflow_model_evaluation_page') }}"
+        >Previous Step</a
+      ><a
+        class="btn btn-success"
+        href="{{ url_for('workflow_deployment_page') }}"
+        >Next Step</a
+      >
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

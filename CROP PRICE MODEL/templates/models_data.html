@@ -1,0 +1,35 @@
+{% extends 'base.html' %} {% block title %}Models Data | CropAI{% endblock %} {%
+block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>Models Data</h2>
+    <p>
+      Real-time model evaluation generated from the active dataset and model
+      pipeline.
+    </p>
+    <div class="d-flex align-items-center gap-2">
+      <button id="refreshModelsData" class="btn btn-sm btn-outline-success">
+        Refresh Live Data
+      </button>
+      <small id="modelsDataUpdatedAt" class="text-muted"></small>
+    </div>
+  </div>
+  <div class="glass-card p-3">
+    <h5>Model Evaluation</h5>
+    <div class="table-responsive">
+      <table class="table table-striped" id="modelsTable">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Training R²</th>
+            <th>Test R²</th>
+            <th>Training RMSE</th>
+            <th>Test RMSE</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

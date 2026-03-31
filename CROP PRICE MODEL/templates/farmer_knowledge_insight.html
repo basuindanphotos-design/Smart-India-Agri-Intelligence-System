@@ -1,0 +1,177 @@
+{% extends 'base.html' %} {% block title %}Farmer Knowledge Insight{% endblock
+%} {% block content %}
+<section class="page-section insight-page py-5">
+  <div class="container-fluid px-lg-4">
+    <div class="insight-hero reveal-up">
+      <div>
+        <p class="insight-eyebrow">Farmer Knowledge Insight</p>
+        <h2>Decision Insights for Crop Price Planning</h2>
+        <p>
+          Review recommendation signals, price outlook, best market guidance,
+          and farmer education generated from your prediction inputs.
+        </p>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="{{ url_for('predict_page') }}" class="btn btn-outline-success"
+          >Back to Prediction</a
+        >
+        <button
+          id="exportFarmerInsightBtn"
+          type="button"
+          class="btn btn-accent"
+        >
+          Export Insight
+        </button>
+      </div>
+    </div>
+
+    <div id="farmerInsightEmpty" class="glass-card p-4 mt-4 d-none">
+      <h5 class="mb-2">No Insight Available</h5>
+      <p class="text-muted mb-3">
+        Submit a crop price prediction first to generate farmer knowledge
+        insights.
+      </p>
+      <a href="{{ url_for('predict_page') }}" class="btn btn-success"
+        >Open Prediction Form</a
+      >
+    </div>
+
+    <div id="farmerInsightContent" class="d-none">
+      <div class="insight-meta-row reveal-up">
+        <div class="insight-meta-pill">
+          <span>State</span>
+          <strong id="insightState">--</strong>
+        </div>
+        <div class="insight-meta-pill">
+          <span>District</span>
+          <strong id="insightDistrict">--</strong>
+        </div>
+        <div class="insight-meta-pill">
+          <span>Market</span>
+          <strong id="insightMarket">--</strong>
+        </div>
+        <div class="insight-meta-pill">
+          <span>Commodity</span>
+          <strong id="insightCommodity">--</strong>
+        </div>
+        <div class="insight-meta-pill">
+          <span>Variety</span>
+          <strong id="insightVariety">--</strong>
+        </div>
+      </div>
+
+      <div class="big-price-card insight-top-card mt-4 reveal-up">
+        <div
+          class="d-flex justify-content-between align-items-center flex-wrap gap-2"
+        >
+          <h4 class="mb-0">
+            <i class="fa-solid fa-wrench me-2"></i><span id="fpCrop">Crop</span>
+            Insight
+          </h4>
+          <span class="badge text-bg-success" id="fpActionBadge"
+            >Good Time to Sell</span
+          >
+        </div>
+        <div class="mt-3 display-price">
+          Expected Price: <span id="fpPredPrice">₹0</span>
+          <small>per kg</small>
+        </div>
+        <div class="mt-2">
+          Current Market Price: <strong id="fpCurrentPrice">₹0</strong>
+        </div>
+        <div id="fpDelta" class="profit-indicator mt-2">
+          ▲ +₹0 Profit Opportunity
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-6 reveal-up">
+          <div class="panel-card h-100 insight-card">
+            <h6><i class="fa-solid fa-arrow-trend-up me-2"></i>Price Trend</h6>
+            <div id="fpTrend" class="trend-line"></div>
+            <p id="fpTrendText" class="small mb-0"></p>
+          </div>
+        </div>
+        <div class="col-md-6 reveal-up">
+          <div class="panel-card h-100 insight-card">
+            <h6><i class="fa-solid fa-shop me-2"></i>Best Market</h6>
+            <h5 id="fpBestMarket" class="mb-2">-</h5>
+            <ul id="fpMarketReasons" class="small mb-0 ps-3"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-card mt-3 insight-card reveal-up">
+        <h6>
+          <i class="fa-solid fa-sack-dollar me-2"></i>Profit Estimation Tool
+        </h6>
+        <div class="row g-2 align-items-end">
+          <div class="col-sm-5">
+            <label class="form-label small">Enter Quantity (kg)</label>
+            <input
+              id="fpQty"
+              type="number"
+              min="1"
+              value="100"
+              class="form-control"
+            />
+          </div>
+          <div class="col-sm-7">
+            <div class="revenue-box">
+              Estimated Revenue: <span id="fpRevenue">₹0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-lg-5 reveal-up">
+          <div class="panel-card h-100 insight-card">
+            <h6>
+              <i class="fa-solid fa-shield-heart me-2"></i>Prediction
+              Reliability: <span id="fpConfidenceText">0%</span>
+            </h6>
+            <div class="progress insight-progress" style="height: 18px">
+              <div
+                id="fpConfidenceBar"
+                class="progress-bar"
+                role="progressbar"
+                style="width: 0%"
+              >
+                0%
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7 reveal-up">
+          <div class="panel-card h-100 insight-card">
+            <h6>
+              <i class="fa-solid fa-chart-line me-2"></i>Past Trend vs Expected
+              Price
+            </h6>
+            <canvas id="farmerInsightChart" height="125"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-lg-5 reveal-up">
+          <div class="panel-card h-100 summary-box insight-card">
+            <h6><i class="fa-solid fa-circle-info me-2"></i>Farmer Summary</h6>
+            <p id="fpSummary1" class="mb-1"></p>
+            <p id="fpSummary2" class="mb-1"></p>
+            <p id="fpSummary3" class="mb-0"></p>
+          </div>
+        </div>
+        <div class="col-lg-7 reveal-up">
+          <div class="panel-card h-100 insight-card">
+            <h6><i class="fa-solid fa-book-open me-2"></i>Farmer Education</h6>
+            <ul id="fpEducationTips" class="small mb-2 ps-3"></ul>
+            <div class="small text-muted" id="fpMetaLine">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,287 @@
+{% extends 'base.html' %} {% block title %}Decision Support Insights | Crop
+Price Model{% endblock %} {% block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>Decision Support Insights</h2>
+    <p>
+      Turn model predictions into practical mandi decisions with confidence,
+      market context, and actionable rules.
+    </p>
+    <small id="dsiUpdatedAt" class="text-muted"></small>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="dsiAiReady">--</h4>
+        <span>Model Readiness</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="dsiRecords">--</h4>
+        <span>Records Considered</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="dsiMarkets">--</h4>
+        <span>Markets Covered</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="dsiCommodities">--</h4>
+        <span>Commodities Tracked</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="glass-card p-4 h-100">
+        <h5 class="mb-2">Action Matrix (How to Decide)</h5>
+        <p class="small text-muted mb-3">
+          Use the matrix below after you run a prediction in Test Application or
+          Predict page.
+        </p>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Condition</th>
+                <th>Signal</th>
+                <th>Recommended Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  Expected price is above current market and confidence >= 75%
+                </td>
+                <td><span class="badge text-bg-success">Strong Sell</span></td>
+                <td>
+                  Sell in current window, compare 1-2 nearby markets for best
+                  exit.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Expected price is above current market but confidence < 75%
+                </td>
+                <td>
+                  <span class="badge text-bg-warning">Cautious Sell</span>
+                </td>
+                <td>
+                  Verify current mandi board rates, then sell if spread remains
+                  positive.
+                </td>
+              </tr>
+              <tr>
+                <td>Expected price is near current market (parity zone)</td>
+                <td>
+                  <span class="badge text-bg-secondary">Wait/Monitor</span>
+                </td>
+                <td>
+                  Wait short term and monitor arrivals plus local transport cost
+                  changes.
+                </td>
+              </tr>
+              <tr>
+                <td>Expected price is below current market</td>
+                <td><span class="badge text-bg-danger">Avoid Delay</span></td>
+                <td>
+                  Prefer selling now; delaying may reduce realized returns.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <h5 class="mb-2">Live Decision Context</h5>
+        <p class="small text-muted mb-3">
+          Real-time context from your active dataset and model.
+        </p>
+        <div class="small">
+          <div class="mb-2">
+            <strong>Model:</strong> <span id="dsiModelName">--</span>
+          </div>
+          <div class="mb-2">
+            <strong>Model Trained:</strong> <span id="dsiModelTrained">--</span>
+          </div>
+          <div class="mb-2">
+            <strong>Dataset Modified:</strong>
+            <span id="dsiDatasetModified">--</span>
+          </div>
+          <div class="mb-2">
+            <strong>Real Rows:</strong> <span id="dsiRealRows">--</span>
+          </div>
+          <div class="mb-2">
+            <strong>Synthetic Rows:</strong>
+            <span id="dsiSyntheticRows">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h5>Top Commodity Price Levels</h5>
+        <canvas id="dsiCommodityChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h5>Top District Opportunity Signals</h5>
+        <canvas id="dsiDistrictChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="glass-card p-4">
+        <div
+          class="d-flex justify-content-between align-items-center flex-wrap gap-2"
+        >
+          <h5 class="mb-0">Decision Notes For Farmers</h5>
+          <a href="{{ url_for('predict_page') }}" class="btn btn-accent btn-sm"
+            >Run Prediction</a
+          >
+        </div>
+        <ul class="small mt-3 mb-0" id="dsiNotes"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block scripts %}
+<script>
+  (async function () {
+    const fmtNum = (v) => Number(v || 0).toLocaleString();
+    const notesEl = document.getElementById("dsiNotes");
+    let commodityChart = null;
+    let districtChart = null;
+
+    try {
+      const [overviewRes, dashRes] = await Promise.all([
+        fetch("/api/live_overview"),
+        fetch("/api/dashboard_data"),
+      ]);
+      const overview = await overviewRes.json();
+      const dash = await dashRes.json();
+
+      document.getElementById("dsiUpdatedAt").textContent =
+        "Updated at: " + (overview.updated_at || "--");
+
+      document.getElementById("dsiAiReady").textContent =
+        String(overview?.stats?.ai_ready ?? "--") + "%";
+      document.getElementById("dsiRecords").textContent = fmtNum(
+        overview?.stats?.records,
+      );
+      document.getElementById("dsiMarkets").textContent = fmtNum(
+        overview?.stats?.markets,
+      );
+      document.getElementById("dsiCommodities").textContent = fmtNum(
+        overview?.stats?.commodities,
+      );
+
+      document.getElementById("dsiModelName").textContent =
+        overview?.model?.name || dash?.meta?.model_name || "--";
+      document.getElementById("dsiModelTrained").textContent =
+        overview?.model?.trained_at || dash?.meta?.trained_at || "--";
+      document.getElementById("dsiDatasetModified").textContent =
+        overview?.dataset_last_modified ||
+        dash?.meta?.dataset_last_modified ||
+        "--";
+      document.getElementById("dsiRealRows").textContent = fmtNum(
+        dash?.stats?.real_rows,
+      );
+      document.getElementById("dsiSyntheticRows").textContent = fmtNum(
+        dash?.stats?.synthetic_rows,
+      );
+
+      const commodityCtx = document.getElementById("dsiCommodityChart");
+      if (commodityCtx) {
+        const labels = (dash?.commodity?.labels || []).slice(0, 8);
+        const values = (dash?.commodity?.values || []).slice(0, 8);
+        commodityChart = new Chart(commodityCtx, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Avg Modal Price",
+                data: values,
+                backgroundColor: "rgba(46, 125, 50, 0.65)",
+                borderColor: "rgba(46, 125, 50, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } },
+          },
+        });
+      }
+
+      const districtCtx = document.getElementById("dsiDistrictChart");
+      if (districtCtx) {
+        const labels = (dash?.district?.labels || []).slice(0, 8);
+        const values = (dash?.district?.values || []).slice(0, 8);
+        districtChart = new Chart(districtCtx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "District Price Signal",
+                data: values,
+                borderColor: "rgba(255, 160, 0, 1)",
+                backgroundColor: "rgba(255, 160, 0, 0.25)",
+                fill: true,
+                tension: 0.25,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+          },
+        });
+      }
+
+      if (notesEl) {
+        const aiReady = Number(overview?.stats?.ai_ready || 0);
+        const realRows = Number(dash?.stats?.real_rows || 0);
+        const synthRows = Number(dash?.stats?.synthetic_rows || 0);
+        const topCommodity = dash?.commodity?.labels?.[0] || "Top commodity";
+        const spreadLeader =
+          dash?.spread?.labels?.[0] || "Leading spread commodity";
+
+        const notes = [
+          `Model readiness is currently ${aiReady}% - use confidence level to decide whether to sell immediately or verify locally first.`,
+          `${topCommodity} currently leads average modal price; compare your selected market with best-market suggestion before final sale.`,
+          `${spreadLeader} shows the highest average price spread; this often signals stronger negotiation windows.`,
+          `Data composition: real rows ${fmtNum(realRows)} vs synthetic rows ${fmtNum(synthRows)}. Higher real-row share improves decision reliability.`,
+        ];
+
+        notesEl.innerHTML = notes
+          .map((n) => `<li class="mb-2">${n}</li>`)
+          .join("");
+      }
+    } catch (_) {
+      document.getElementById("dsiUpdatedAt").textContent =
+        "Unable to load live decision context right now.";
+      if (notesEl) {
+        notesEl.innerHTML =
+          "<li>Data service is temporarily unavailable. Please retry in a few seconds.</li>";
+      }
+    }
+  })();
+</script>
+{% endblock %}

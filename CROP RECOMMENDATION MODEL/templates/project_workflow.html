@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block title %}Project Workflow | Crop
+Recommendation Prediction{% endblock %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="container workflow-shell">
+  <div class="section-head workflow-head">
+    <h1>Project Workflow</h1>
+    <p>
+      Complete AI pipeline for Crop Recommendation from dataset preparation to
+      deployment.
+    </p>
+  </div>
+
+  <div class="workflow-grid">
+    {% for step in workflow.steps %}
+    <article class="workflow-card reveal-workflow">
+      <div class="workflow-icon"><i class="fa-solid {{ step.icon }}"></i></div>
+      <h3>{{ step.title }}</h3>
+      <p>{{ step.description }}</p>
+      <a class="workflow-btn" href="{{ url_for(step.endpoint) }}"
+        >View Details</a
+      >
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

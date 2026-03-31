@@ -1,0 +1,74 @@
+{% extends 'base.html' %} {% block extra_head %}<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>{% endblock %} {% block content %}
+<section class="section-pad">
+  <div class="container workflow-detail-page">
+    <div class="workflow-page-head reveal-up">
+      <p class="workflow-kicker mb-2">Step 6</p>
+      <h1>Model Evaluation</h1>
+      <p>Quantitative validation of prediction quality and model robustness.</p>
+    </div>
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="stat-card h-100">
+          <p>R² Score</p>
+          <h3>
+            {{ model_metrics.r2 if model_metrics.r2 is not none else 'N/A' }}
+          </h3>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card h-100">
+          <p>MAE</p>
+          <h3>
+            {{ model_metrics.mae if model_metrics.mae is not none else 'N/A' }}
+          </h3>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card h-100">
+          <p>RMSE</p>
+          <h3>
+            {{ model_metrics.rmse if model_metrics.rmse is not none else 'N/A'
+            }}
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="card chart-card reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-3">Prediction Error Profile</h2>
+        <div class="chart-wrap">
+          <canvas id="workflowEvaluationChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="card panel-card mt-4 reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-2">Best Performing Model</h2>
+        <p class="mb-0 text-muted">
+          {{ model_metrics.model_name }} selected based on strongest overall
+          tradeoff across R², MAE, and RMSE.
+        </p>
+      </div>
+    </div>
+    <div class="workflow-nav mt-4">
+      <a
+        class="btn btn-outline-success"
+        href="{{ url_for('workflow_model_training_page') }}"
+        >Previous Step</a
+      ><a
+        class="btn btn-success"
+        href="{{ url_for('workflow_prediction_page') }}"
+        >Next Step</a
+      >
+    </div>
+  </div>
+</section>
+<script id="modelDataPayload" type="application/json">
+  {{ model_metrics | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

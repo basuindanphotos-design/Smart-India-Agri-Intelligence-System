@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Crop Recommendation Prediction{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="navbar container">
+        <a href="http://127.0.0.1:5050/" class="brand"
+          >Smart India Agri Intelligence System</a
+        >
+        <ul class="menu">
+          <li><a href="{{ url_for('home') }}">Home</a></li>
+          <li><a href="{{ url_for('crop_predictor') }}">Predict</a></li>
+          <li><a href="{{ url_for('prediction_result') }}">Result</a></li>
+          <li>
+            <a href="{{ url_for('project_workflow') }}">Project Workflow</a>
+          </li>
+          <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+          <li><a href="{{ url_for('dataset_explorer') }}">Dataset</a></li>
+          <li><a href="{{ url_for('about') }}">About</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>{% block content %}{% endblock %}</main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <h3>Smart India Agri Intelligence System</h3>
+          <p>
+            AI-powered crop recommendation platform designed for transparent,
+            explainable, and farmer-focused agricultural decisions.
+          </p>
+        </div>
+
+        <div>
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="{{ url_for('home') }}">Home</a></li>
+            <li><a href="{{ url_for('crop_predictor') }}">Predict Crop</a></li>
+            <li>
+              <a href="{{ url_for('dashboard') }}">Analytics Dashboard</a>
+            </li>
+            <li>
+              <a href="{{ url_for('dataset_explorer') }}">Dataset Explorer</a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Workflow</h4>
+          <ul>
+            <li>
+              <a href="{{ url_for('project_workflow') }}"
+                >Project Workflow Hub</a
+              >
+            </li>
+            <li>
+              <a href="{{ url_for('workflow_model_training') }}"
+                >Model Training</a
+              >
+            </li>
+            <li>
+              <a href="{{ url_for('workflow_model_evaluation') }}"
+                >Model Evaluation</a
+              >
+            </li>
+            <li>
+              <a href="{{ url_for('workflow_deployment') }}">Deployment</a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Platform</h4>
+          <p>Built with Flask, Pandas, scikit-learn and Chart.js.</p>
+          <p>
+            Theme: Green agriculture intelligence with explainable insights.
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="loader"></div>
+      <p>Running AI recommendation...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+  </body>
+</html>

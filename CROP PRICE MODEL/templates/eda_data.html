@@ -1,0 +1,55 @@
+{% extends 'base.html' %} {% block title %}EDA Data | CropAI{% endblock %} {%
+block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>EDA Data</h2>
+    <p>Real-time exploratory charts generated from the current dataset.</p>
+    <div class="d-flex align-items-center gap-2">
+      <button id="refreshEdaData" class="btn btn-sm btn-outline-success">
+        Refresh Live Data
+      </button>
+      <small id="edaDataUpdatedAt" class="text-muted"></small>
+    </div>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="glass-card p-3">
+        <h6>Min Price Distribution</h6>
+        <canvas id="histMin"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="glass-card p-3">
+        <h6>Max Price Distribution</h6>
+        <canvas id="histMax"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="glass-card p-3">
+        <h6>Modal Price Distribution</h6>
+        <canvas id="histModal"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h6>State Count Plot</h6>
+        <canvas id="catState"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h6>Commodity Count Plot</h6>
+        <canvas id="catCommodity"></canvas>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="glass-card p-3">
+        <h6>Heatmap of Data (Correlation Matrix)</h6>
+        <div class="table-responsive">
+          <table id="corrTable" class="table table-striped table-sm"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

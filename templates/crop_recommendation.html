@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Crop Prediction | Smart Farming</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="navbar container">
+        <a href="#home" class="brand"><span>🌱</span>AI Crop Prediction</a>
+        <ul class="menu">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#predictor">Crop Predictor</a></li>
+          <li><a href="#market">Market Insights</a></li>
+          <li><a href="#weather">Weather</a></li>
+          <li><a href="#about">About Project</a></li>
+        </ul>
+        <div class="weather-inline">
+          <input id="cityInput" type="text" />
+          <button id="weatherBtn" type="button">
+            <i class="fa-solid fa-cloud-sun"></i> Weather
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home" class="hero container reveal">
+        <div class="hero-copy">
+          <p class="eyebrow">AI Powered Agriculture Intelligence</p>
+          <h1>AI Crop Prediction System</h1>
+          <p>
+            Predict the best crop and estimate production using environmental
+            conditions and machine learning.
+          </p>
+          <a href="#predictor" class="cta-btn">Start Prediction</a>
+        </div>
+        <div class="hero-art">
+          <div class="hero-badge">🌾 Smart Crop Guidance</div>
+          <div class="hero-icons">
+            <span>🌱</span>
+            <span>🚜</span>
+            <span>🌦️</span>
+            <span>📈</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="weather" class="container reveal">
+        <div class="section-head">
+          <h2>🌦 Live Weather Panel</h2>
+          <p>
+            Fetch real-time weather and use it directly for precise crop
+            recommendations.
+          </p>
+        </div>
+        <div id="weatherPanel" class="weather-panel hidden">
+          <div class="weather-grid">
+            <article class="weather-card">
+              <h3>🌡 Temperature</h3>
+              <p id="tempText">-- °C</p>
+            </article>
+            <article class="weather-card">
+              <h3>💧 Humidity</h3>
+              <p id="humidityText">-- %</p>
+            </article>
+            <article class="weather-card">
+              <h3>🌧 Rainfall</h3>
+              <p id="rainText">-- mm</p>
+            </article>
+            <article class="weather-card">
+              <h3>📍 Location</h3>
+              <p id="locationText">--</p>
+            </article>
+          </div>
+          <p id="updatedText" class="weather-updated"></p>
+          <button id="useWeatherBtn" type="button" class="ghost-btn">
+            Use Weather Data for Prediction
+          </button>
+        </div>
+      </section>
+
+      <section id="predictor" class="container reveal">
+        <div class="section-head">
+          <h2>🌾 Prediction Input Panel</h2>
+          <p>
+            Provide your farm profile and environmental conditions for
+            AI-powered crop recommendations.
+          </p>
+        </div>
+        <form
+          id="predictionForm"
+          action="/predict"
+          method="post"
+          class="predict-form"
+        >
+          <input type="hidden" name="rainfall" id="rainfallInput" value="0" />
+          <input type="hidden" name="location" id="locationInput" value="" />
+
+          <label>
+            <span
+              ><i class="fa-solid fa-temperature-high"></i> Temperature
+              (°C)</span
+            >
+            <input type="number" step="any" name="temperature" required />
+          </label>
+
+          <label>
+            <span><i class="fa-solid fa-droplet"></i> Humidity (%)</span>
+            <input type="number" step="any" name="humidity" required />
+          </label>
+
+          <label>
+            <span><i class="fa-solid fa-calendar-days"></i> Season</span>
+            <select name="season" required>
+              <option value="" disabled selected>Select a season</option>
+              <option value="Rabi">Rabi</option>
+              <option value="Kharif">Kharif</option>
+              <option value="Zaid">Zaid</option>
+              <option value="Whole Year">Whole Year</option>
+            </select>
+          </label>
+
+          <div class="form-grid">
+            <label>
+              <span><i class="fa-solid fa-seedling"></i> Crop Type</span>
+              <select name="crop_type" required>
+                <option value="" disabled selected>Select crop type</option>
+                <option value="Perennial">Perennial</option>
+                <option value="Annual">Annual</option>
+                <option value="Biennial">Biennial</option>
+              </select>
+            </label>
+
+            <label>
+              <span><i class="fa-solid fa-cloud-rain"></i> Water Source</span>
+              <select name="water_source" required>
+                <option value="" disabled selected>Select water source</option>
+                <option value="Rainfed">Rainfed</option>
+                <option value="Irrigated">Irrigated</option>
+              </select>
+            </label>
+
+            <label>
+              <span><i class="fa-solid fa-earth-asia"></i> Climate Region</span>
+              <select name="climate_type" required>
+                <option value="" disabled selected>Select climate type</option>
+                <option value="Tropical">Tropical</option>
+                <option value="Subtropical">Subtropical</option>
+                <option value="Temperate">Temperate</option>
+              </select>
+            </label>
+
+            <label>
+              <span
+                ><i class="fa-solid fa-hourglass-half"></i> Crop Duration</span
+              >
+              <select name="duration_type" required>
+                <option value="" disabled selected>Select duration</option>
+                <option value="Short-Duration">
+                  Short-Duration (60-90 days)
+                </option>
+                <option value="Medium-Duration">
+                  Medium-Duration (90-120 days)
+                </option>
+                <option value="Long-Duration">Long-Duration (120+ days)</option>
+              </select>
+            </label>
+
+            <label>
+              <span><i class="fa-solid fa-tractor"></i> Farming Category</span>
+              <select name="farming_system" required>
+                <option value="" disabled selected>
+                  Select farming category
+                </option>
+                <option value="Plantation">Plantation Crops</option>
+                <option value="Field">Field Crops</option>
+                <option value="Horticulture">Horticulture Crops</option>
+              </select>
+            </label>
+
+            <label>
+              <span><i class="fa-solid fa-sack-dollar"></i> Crop Purpose</span>
+              <select name="economic_use" required>
+                <option value="" disabled selected>Select crop purpose</option>
+                <option value="Cash">Cash Crop</option>
+                <option value="Food">Food Crop</option>
+                <option value="Fodder">Fodder Crop</option>
+              </select>
+            </label>
+          </div>
+
+          <article class="guide-panel">
+            <h3>Smart Crop Guide</h3>
+            <p>
+              Use this guide to choose crop profile options for better
+              recommendations.
+            </p>
+            <ul>
+              <li>
+                Perennial: Sugarcane, Banana, Coconut, Coffee, Tea, Rubber
+              </li>
+              <li>Annual: Wheat, Rice, Maize, Mustard, Sunflower, Groundnut</li>
+              <li>Biennial: Carrot, Onion, Beetroot, Cabbage, Parsley</li>
+              <li>Rainfed examples: Bajra, Jowar, Pulses, Millets</li>
+              <li>Tropical: Coconut, Banana, Coffee, Cocoa</li>
+              <li>Subtropical: Wheat, Mustard, Citrus fruits</li>
+              <li>Temperate: Apple, Pear, Cherry, Plum</li>
+              <li>Short duration: Moong, Urad, Lettuce, Spinach</li>
+              <li>Medium duration: Maize, Soybean, Groundnut, Sunflower</li>
+              <li>Long duration: Sugarcane, Cotton, Tur, Banana</li>
+              <li>Plantation: Tea, Coffee, Rubber, Coconut, Cocoa</li>
+              <li>Field: Wheat, Rice, Maize, Barley</li>
+              <li>Horticulture: Mango, Tomato, Potato, Onion, Apple, Rose</li>
+              <li>Cash: Cotton, Sugarcane, Tobacco, Coffee, Rubber</li>
+              <li>Food: Rice, Wheat, Maize, Millets</li>
+              <li>
+                Fodder: Fodder maize, Napier grass, Alfalfa, Sorghum fodder
+              </li>
+            </ul>
+          </article>
+
+          <label>
+            <span
+              ><i class="fa-solid fa-ruler-combined"></i> Land Area
+              (Hectare)</span
+            >
+            <input type="number" step="any" name="area" required />
+          </label>
+
+          <button type="submit" class="submit-btn">
+            <i class="fa-solid fa-seedling"></i> Predict Crop & Production
+          </button>
+        </form>
+      </section>
+
+      <section id="market" class="container reveal">
+        <div class="section-head">
+          <h2>💰 Market Insights</h2>
+          <p>
+            Plan profitable decisions with data-driven agriculture insights and
+            strategic planning.
+          </p>
+        </div>
+        <div class="market-grid">
+          <article class="info-card">
+            <h3>Seasonal Timing</h3>
+            <p>
+              Match sowing windows with expected weather trends and model
+              outputs.
+            </p>
+          </article>
+          <article class="info-card">
+            <h3>Cost vs Yield</h3>
+            <p>
+              Estimate return potential by balancing land area and resource
+              strategy.
+            </p>
+          </article>
+          <article class="info-card">
+            <h3>Risk Awareness</h3>
+            <p>
+              Use humidity and rainfall signals to reduce stress on crops early.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="about" class="container reveal about">
+        <h2>📚 About This Project</h2>
+        <p>
+          This intelligent system combines advanced machine learning prediction
+          models, real-time weather data integration, and farmer-focused
+          guidance to recommend optimal crops, forecast yield potential, and
+          estimate production in a clear, actionable format designed for
+          agricultural professionals and farmers.
+        </p>
+      </section>
+    </main>
+
+    <div id="loadingOverlay" class="loading-overlay hidden">
+      <div class="loader"></div>
+      <p>Running AI prediction...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

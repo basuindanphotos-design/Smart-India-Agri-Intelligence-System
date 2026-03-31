@@ -1,0 +1,35 @@
+{% extends 'base.html' %} {% block title %}EDA Data 2 | CropAI{% endblock %} {%
+block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>EDA Data 2</h2>
+    <p>Scatter and trend analysis driven by current trained data.</p>
+    <div class="d-flex align-items-center gap-2">
+      <button id="refreshEdaData2" class="btn btn-sm btn-outline-success">
+        Refresh Live Data
+      </button>
+      <small id="edaData2UpdatedAt" class="text-muted"></small>
+    </div>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h6>Scatter Plot of Min Price and Modal Price</h6>
+        <canvas id="scatterSupply"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h6>Scatter Plot of Max Price and Modal Price</h6>
+        <canvas id="scatterDemand"></canvas>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="glass-card p-3">
+        <h6>Monthly Modal Price Line Trend</h6>
+        <canvas id="monthlyLineEda2"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

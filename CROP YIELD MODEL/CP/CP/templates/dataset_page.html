@@ -1,0 +1,108 @@
+{% extends 'base.html' %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="section-pad">
+  <div class="container workflow-detail-page">
+    <div class="workflow-page-head reveal-up">
+      <p class="workflow-kicker mb-2">Step 1</p>
+      <h1>Dataset Collection</h1>
+      <p>
+        Core dataset characteristics and source features used for crop yield
+        modeling.
+      </p>
+    </div>
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-4">
+        <div class="stat-card h-100">
+          <p>Total Records</p>
+          <h3>{{ workflow_total_records }}</h3>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card h-100">
+          <p>Total Features</p>
+          <h3>{{ workflow_total_features }}</h3>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card h-100">
+          <p>Target Variable</p>
+          <h3>{{ workflow_target }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="card panel-card mb-4 reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-2">Primary Features</h2>
+        <p class="text-muted">{{ workflow_feature_list | join(', ') }}</p>
+      </div>
+    </div>
+
+    <div class="card panel-card mb-4 reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-3">Dataset Preview</h2>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Crop</th>
+                <th>Year</th>
+                <th>Yield (hg/ha)</th>
+                <th>Rainfall</th>
+                <th>Pesticides</th>
+                <th>Temperature</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in workflow_dataset_preview %}
+              <tr>
+                <td>{{ row.Area }}</td>
+                <td>{{ row.Item }}</td>
+                <td>{{ row.Year }}</td>
+                <td>{{ row['hg/ha_yield'] }}</td>
+                <td>{{ row.average_rain_fall_mm_per_year }}</td>
+                <td>{{ row.pesticides_tonnes }}</td>
+                <td>{{ row.avg_temp }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card chart-card reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-3">Crop Distribution</h2>
+        <div class="chart-wrap chart-wrap--model">
+          <canvas id="workflowCropDistributionChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="workflow-nav mt-4">
+      <a
+        class="btn btn-outline-success"
+        href="{{ url_for('project_workflow_page') }}"
+        >Back to Workflow</a
+      >
+      <a
+        class="btn btn-success"
+        href="{{ url_for('workflow_preprocessing_page') }}"
+        >Next Step</a
+      >
+    </div>
+  </div>
+</section>
+<script id="workflowChartData" type="application/json">
+  {{ chart_data | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,447 @@
+{% extends 'base.html' %} {% block title %}Crop Price Prediction{% endblock %}
+{% block content %}
+<section
+  class="hero-section"
+  style="
+    background: linear-gradient(135deg, #1e5631 0%, #2d8a4b 100%);
+    color: white;
+    padding: 4rem 0;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+  "
+>
+  <div class="container">
+    <div class="row align-items-center g-4">
+      <div class="col-lg-6 reveal-up">
+        <h1
+          class="hero-title"
+          style="
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 1rem 0;
+            color: white;
+            line-height: 1.2;
+          "
+        >
+          Crop Price Prediction
+        </h1>
+        <p
+          class="lead"
+          style="
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            max-width: 500px;
+          "
+        >
+          Forecast mandi price trends with AI trained on AGMARKNET data. Get
+          actionable market intelligence for optimal harvest timing and trading
+          strategies.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          <a
+            href="{{ url_for('predict_page') }}"
+            class="btn"
+            style="
+              background: white;
+              color: #1e5631;
+              padding: 0.75rem 2rem;
+              font-weight: 600;
+              border-radius: 8px;
+              text-decoration: none;
+              transition: all 0.3s;
+            "
+          >
+            <i class="fa-solid fa-sack-dollar me-2"></i>Start Price Forecast
+          </a>
+          <a
+            href="{{ url_for('dashboard_page') }}"
+            class="btn"
+            style="
+              background: rgba(255, 255, 255, 0.2);
+              color: white;
+              padding: 0.75rem 2rem;
+              font-weight: 600;
+              border-radius: 8px;
+              text-decoration: none;
+              border: 2px solid white;
+              transition: all 0.3s;
+            "
+          >
+            <i class="fa-solid fa-chart-line me-2"></i>Explore Insights
+          </a>
+        </div>
+        <div
+          style="display: flex; gap: 2rem; margin-top: 2rem; flex-wrap: wrap"
+        >
+          <span style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7)"
+            ><i class="fa-solid fa-circle-check me-2"></i>Live dataset
+            linked</span
+          >
+          <span style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7)"
+            ><i class="fa-solid fa-circle-check me-2"></i>Explainable
+            outputs</span
+          >
+          <span style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.7)"
+            ><i class="fa-solid fa-circle-check me-2"></i>Real-time
+            analysis</span
+          >
+        </div>
+      </div>
+      <div class="col-lg-6 reveal-up">
+        <div
+          style="
+            background: linear-gradient(
+              135deg,
+              rgba(255, 255, 255, 0.15) 0%,
+              rgba(255, 255, 255, 0.05) 100%
+            );
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+          "
+        >
+          <h5
+            style="
+              font-size: 0.85rem;
+              text-transform: uppercase;
+              opacity: 0.9;
+              margin-bottom: 1.5rem;
+              letter-spacing: 0.5px;
+            "
+          >
+            <i class="fa-solid fa-signal me-2"></i>Live Data Snapshot
+          </h5>
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 1.5rem;
+              margin-bottom: 1.5rem;
+            "
+          >
+            <div
+              style="
+                background: rgba(255, 255, 255, 0.1);
+                padding: 1.25rem;
+                border-radius: 12px;
+                text-align: center;
+              "
+            >
+              <span
+                style="
+                  opacity: 0.8;
+                  display: block;
+                  font-size: 0.85rem;
+                  margin-bottom: 0.5rem;
+                "
+                >Records</span
+              >
+              <strong
+                id="homeRecords"
+                class="counter"
+                data-target="0"
+                style="font-size: 2.2rem; display: block"
+                >0</strong
+              >
+            </div>
+            <div
+              style="
+                background: rgba(255, 255, 255, 0.1);
+                padding: 1.25rem;
+                border-radius: 12px;
+                text-align: center;
+              "
+            >
+              <span
+                style="
+                  opacity: 0.8;
+                  display: block;
+                  font-size: 0.85rem;
+                  margin-bottom: 0.5rem;
+                "
+                >Commodities</span
+              >
+              <strong
+                id="homeMarkets"
+                class="counter"
+                data-target="0"
+                style="font-size: 2.2rem; display: block"
+                >0</strong
+              >
+            </div>
+            <div
+              style="
+                background: rgba(255, 255, 255, 0.1);
+                padding: 1.25rem;
+                border-radius: 12px;
+                text-align: center;
+              "
+            >
+              <span
+                style="
+                  opacity: 0.8;
+                  display: block;
+                  font-size: 0.85rem;
+                  margin-bottom: 0.5rem;
+                "
+                >States</span
+              >
+              <strong
+                id="homeStates"
+                class="counter"
+                data-target="0"
+                style="font-size: 2.2rem; display: block"
+                >0</strong
+              >
+            </div>
+            <div
+              style="
+                background: rgba(255, 255, 255, 0.1);
+                padding: 1.25rem;
+                border-radius: 12px;
+                text-align: center;
+              "
+            >
+              <span
+                style="
+                  opacity: 0.8;
+                  display: block;
+                  font-size: 0.85rem;
+                  margin-bottom: 0.5rem;
+                "
+                >Markets</span
+              >
+              <strong
+                id="homeAiReady"
+                class="counter"
+                data-target="0"
+                style="font-size: 2.2rem; display: block"
+                >0</strong
+              >
+            </div>
+          </div>
+          <div
+            style="
+              margin-top: 0.75rem;
+              padding-top: 0.85rem;
+              border-top: 1px solid rgba(255, 255, 255, 0.18);
+            "
+          >
+            <p
+              style="
+                font-size: 0.8rem;
+                opacity: 0.75;
+                margin: 0 0 0.4rem 0;
+                text-align: left;
+              "
+            >
+              <i class="fa-solid fa-microchip me-2"></i>Model:
+              <span id="homeModelName">--</span>
+            </p>
+            <p
+              style="
+                font-size: 0.8rem;
+                opacity: 0.75;
+                margin: 0 0 0.4rem 0;
+                text-align: left;
+              "
+            >
+              <i class="fa-solid fa-calendar-check me-2"></i>Trained:
+              <span id="homeModelTrainedAt">--</span>
+            </p>
+            <p
+              style="
+                font-size: 0.8rem;
+                opacity: 0.75;
+                margin: 0 0 0.4rem 0;
+                text-align: left;
+              "
+            >
+              <i class="fa-solid fa-clock-rotate-left me-2"></i>Updated:
+              <span id="homeLiveUpdatedAt">--</span>
+            </p>
+            <p
+              style="
+                font-size: 0.8rem;
+                opacity: 0.75;
+                margin: 0;
+                text-align: left;
+              "
+            >
+              <i class="fa-solid fa-database me-2"></i>Dataset:
+              <span id="homeDatasetLastModified">--</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5" style="background: #f8fdf6">
+  <div class="container">
+    <div class="text-center mb-5 reveal-up">
+      <h2 class="section-title" style="color: #1e5631">Our Services</h2>
+      <p class="text-muted" style="font-size: 1.05rem">
+        Industry-grade modules for price forecasting and market analytics
+      </p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4 reveal-up">
+        <div
+          class="feature-card"
+          style="
+            background: white;
+            border: 1px solid #e0e7e1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+          "
+        >
+          <div style="font-size: 2.5rem; color: #2d8a4b; margin-bottom: 1rem">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <h5 style="color: #1e5631; margin-bottom: 1rem">Price Forecasting</h5>
+          <p
+            style="color: #666; margin: 0; font-size: 0.95rem; line-height: 1.5"
+          >
+            Predict mandi prices for major crops using ML models trained on
+            historical AGMARKNET data.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 reveal-up">
+        <div
+          class="feature-card"
+          style="
+            background: white;
+            border: 1px solid #e0e7e1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+          "
+        >
+          <div style="font-size: 2.5rem; color: #2d8a4b; margin-bottom: 1rem">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+          <h5 style="color: #1e5631; margin-bottom: 1rem">Market Analysis</h5>
+          <p
+            style="color: #666; margin: 0; font-size: 0.95rem; line-height: 1.5"
+          >
+            Understand seasonal trends, regional variations, and market behavior
+            across states.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 reveal-up">
+        <div
+          class="feature-card"
+          style="
+            background: white;
+            border: 1px solid #e0e7e1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+          "
+        >
+          <div style="font-size: 2.5rem; color: #2d8a4b; margin-bottom: 1rem">
+            <i class="fa-solid fa-chart-pie"></i>
+          </div>
+          <h5 style="color: #1e5631; margin-bottom: 1rem">
+            Data Visualization
+          </h5>
+          <p
+            style="color: #666; margin: 0; font-size: 0.95rem; line-height: 1.5"
+          >
+            Interactive dashboards showing price distributions, trends, and
+            comparative analytics.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 reveal-up">
+        <div
+          class="feature-card"
+          style="
+            background: white;
+            border: 1px solid #e0e7e1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+          "
+        >
+          <div style="font-size: 2.5rem; color: #2d8a4b; margin-bottom: 1rem">
+            <i class="fa-solid fa-compass"></i>
+          </div>
+          <h5 style="color: #1e5631; margin-bottom: 1rem">Market Navigation</h5>
+          <p
+            style="color: #666; margin: 0; font-size: 0.95rem; line-height: 1.5"
+          >
+            Compare prices across markets and regions to identify best selling
+            opportunities.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 reveal-up">
+        <div
+          class="feature-card"
+          style="
+            background: white;
+            border: 1px solid #e0e7e1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+          "
+        >
+          <div style="font-size: 2.5rem; color: #2d8a4b; margin-bottom: 1rem">
+            <i class="fa-solid fa-database"></i>
+          </div>
+          <h5 style="color: #1e5631; margin-bottom: 1rem">Dataset Explorer</h5>
+          <p
+            style="color: #666; margin: 0; font-size: 0.95rem; line-height: 1.5"
+          >
+            Search, filter, and download historical crop price records for
+            research and planning.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 reveal-up">
+        <div
+          class="feature-card"
+          style="
+            background: white;
+            border: 1px solid #e0e7e1;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+          "
+        >
+          <div style="font-size: 2.5rem; color: #2d8a4b; margin-bottom: 1rem">
+            <i class="fa-solid fa-seedling"></i>
+          </div>
+          <h5 style="color: #1e5631; margin-bottom: 1rem">
+            Trader Intelligence
+          </h5>
+          <p
+            style="color: #666; margin: 0; font-size: 0.95rem; line-height: 1.5"
+          >
+            Actionable insights for timing market entry, harvest decisions, and
+            forward contracts.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

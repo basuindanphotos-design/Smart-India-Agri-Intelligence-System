@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>
+      Smart India Agri Intelligence System - Premium AI Agriculture Dashboard
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style-premium.css') }}"
+    />
+  </head>
+  <body>
+    <div class="bg-gradient-layer"></div>
+
+    <!-- NAVBAR -->
+    <header class="navbar-wrapper">
+      <nav class="navbar-premium container">
+        <div class="navbar-brand">
+          <i class="fas fa-leaf navbar-icon"></i>
+          <span>Smart India Agri Intelligence</span>
+        </div>
+
+        <ul class="navbar-menu">
+          <li>
+            <a href="{{ url_for('index') }}" class="nav-link active">Home</a>
+          </li>
+          <li>
+            <a
+              href="{{ url_for('crop_recommendation_redirect') }}"
+              class="nav-link"
+              >Crop Recommendation</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('crop_yield_redirect') }}" class="nav-link"
+              >Yield Predictor</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('crop_price_redirect') }}" class="nav-link"
+              >Price Predictor</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('soil_health_redirect') }}" class="nav-link"
+              >Soil Health</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('farmer_intelligence') }}" class="nav-link"
+              >Farmer Intelligence</a
+            >
+          </li>
+        </ul>
+
+        <button class="navbar-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO SECTION -->
+      <section class="hero-section">
+        <div class="hero-background">
+          <div class="floating-shape shape-1"></div>
+          <div class="floating-shape shape-2"></div>
+          <div class="floating-shape shape-3"></div>
+        </div>
+
+        <div class="container">
+          <div class="hero-grid">
+            <!-- LEFT SIDE -->
+            <div class="hero-left fade-in-up">
+              <h1 class="hero-title">
+                Smart India Agri
+                <span class="gradient-text">Intelligence System</span>
+              </h1>
+              <p class="hero-subtitle">
+                ML-powered platform integrating crop recommendation, yield
+                prediction, price forecasting, and soil intelligence into one
+                smart farming ecosystem.
+              </p>
+
+              <div class="hero-cta-group">
+                <a
+                  href="{{ url_for('farmer_intelligence') }}"
+                  class="btn btn-primary btn-lg"
+                >
+                  <span>Open Unified Intelligence</span>
+                  <i class="fas fa-sparkles"></i>
+                </a>
+                <a href="#modules-section" class="btn btn-secondary btn-lg">
+                  <span>Explore Modules</span>
+                  <i class="fas fa-arrow-down"></i>
+                </a>
+                <!-- About Platform button removed as requested -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- METRICS SECTION -->
+      <section class="metrics-section">
+        <div class="container">
+          <div
+            class="metrics-intro"
+            style="text-align: center; margin-bottom: 2rem"
+          >
+            <h2>Why Choose Our ML Models?</h2>
+            <p>
+              Our platform leverages advanced machine learning to deliver
+              actionable insights for farmers and agri-businesses. With robust
+              data points, high accuracy, and wide coverage, our ML modules
+              empower smarter, data-driven decisions for every stage of the
+              agricultural cycle.
+            </p>
+          </div>
+          <div class="metrics-grid">
+            <div class="metric-card fade-in-up" style="--delay: 0">
+              <div class="metric-icon">
+                <i class="fas fa-cogs"></i>
+              </div>
+              <div class="metric-content">
+                <h3 id="metric-models">5</h3>
+                <p>ML Models</p>
+              </div>
+            </div>
+
+            <div class="metric-card fade-in-up" style="--delay: 0.1s">
+              <div class="metric-icon">
+                <i class="fas fa-database"></i>
+              </div>
+              <div class="metric-content">
+                <h3 id="metric-datapoints">1M+</h3>
+                <p>Data Points</p>
+              </div>
+            </div>
+
+            <div class="metric-card fade-in-up" style="--delay: 0.2s">
+              <div class="metric-icon">
+                <i class="fas fa-chart-pie"></i>
+              </div>
+              <div class="metric-content">
+                <h3 id="metric-accuracy">94%</h3>
+                <p>Accuracy</p>
+              </div>
+            </div>
+
+            <div class="metric-card fade-in-up" style="--delay: 0.3s">
+              <div class="metric-icon">
+                <i class="fas fa-globe"></i>
+              </div>
+              <div class="metric-content">
+                <h3 id="metric-states">32</h3>
+                <p>Major Parts Covered</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW IT WORKS SECTION -->
+      <section class="how-it-works-section" id="how-it-works">
+        <div class="container">
+          <div class="section-header">
+            <h2>How It Works</h2>
+            <p>The Smart Farming Decision Pipeline</p>
+          </div>
+
+          <div class="flow-container">
+            <div class="flow-step fade-in-left" style="--delay: 0">
+              <div class="flow-number">1</div>
+              <div class="flow-icon">
+                <i class="fas fa-leaf"></i>
+              </div>
+              <h3>User Input</h3>
+              <p>Enter farm details & climate data</p>
+            </div>
+
+            <div class="flow-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <div class="flow-step fade-in-up" style="--delay: 0.15s">
+              <div class="flow-number">2</div>
+              <div class="flow-icon">
+                <i class="fas fa-brain"></i>
+              </div>
+              <h3>Recommendation</h3>
+              <p>Best crop suggestion</p>
+            </div>
+
+            <div class="flow-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <div class="flow-step fade-in-up" style="--delay: 0.3s">
+              <div class="flow-number">3</div>
+              <div class="flow-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h3>Yield Forecast</h3>
+              <p>Production estimate</p>
+            </div>
+
+            <div class="flow-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <div class="flow-step fade-in-right" style="--delay: 0.45s">
+              <div class="flow-number">4</div>
+              <div class="flow-icon">
+                <i class="fas fa-money-bill"></i>
+              </div>
+              <h3>Price Analysis</h3>
+              <p>Market opportunity</p>
+            </div>
+
+            <div class="flow-arrow">
+              <i class="fas fa-arrow-right"></i>
+            </div>
+
+            <div class="flow-step fade-in-right" style="--delay: 0.6s">
+              <div class="flow-number">5</div>
+              <div class="flow-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <h3>Decision</h3>
+              <p>Actionable insights</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MODULES SECTION -->
+      <section class="modules-section" id="modules-section">
+        <div class="container">
+          <div class="section-header">
+            <h2>ML-Powered Modules</h2>
+            <p>Comprehensive agriculture intelligence tools</p>
+          </div>
+
+          <div class="modules-grid">
+            {% for card in cards %}
+            <div class="module-premium-card fade-in-up">
+              <div class="module-bg-gradient">
+                <div class="module-gradient-1"></div>
+                <div class="module-gradient-2"></div>
+              </div>
+
+              <div class="module-header">
+                <div class="module-icon-large">
+                  {% if 'Recommendation' in card.title %}
+                  <i class="fas fa-leaf"></i>
+                  {% elif 'Yield' in card.title %}
+                  <i class="fas fa-chart-bar"></i>
+                  {% elif 'Price' in card.title %}
+                  <i class="fas fa-tag"></i>
+                  {% elif 'Soil' in card.title %}
+                  <i class="fas fa-flask"></i>
+                  {% elif 'Unified' in card.title %}
+                  <i class="fas fa-brain"></i>
+                  {% else %}
+                  <i class="fas fa-star"></i>
+                  {% endif %}
+                </div>
+                <h3>{{ card.title }}</h3>
+              </div>
+
+              <p class="module-description">{{ card.description }}</p>
+
+              <div class="module-features">
+                <div class="feature">
+                  <i class="fas fa-check-circle"></i>
+                  <span>AI-driven decisions</span>
+                </div>
+                <div class="feature">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Data-backed insights</span>
+                </div>
+                <div class="feature">
+                  <i class="fas fa-check-circle"></i>
+                  <span>Real-time analysis</span>
+                </div>
+              </div>
+
+              <a href="{{ card.route }}" class="btn btn-module">
+                <span>Open Module</span>
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <!-- FEATURES SECTION -->
+      <section class="features-section">
+        <div class="container">
+          <div class="section-header">
+            <h2>Why Choose Smart India?</h2>
+            <p>Trusted by thousands of farmers</p>
+          </div>
+
+          <div class="features-grid">
+            <div class="feature-card fade-in-up">
+              <div class="feature-icon">
+                <i class="fas fa-robot"></i>
+              </div>
+              <h3>AI-Driven Intelligence</h3>
+              <p>
+                Advanced machine learning models trained on real agricultural
+                data for accurate predictions.
+              </p>
+            </div>
+
+            <div class="feature-card fade-in-up" style="--delay: 0.1s">
+              <div class="feature-icon">
+                <i class="fas fa-database"></i>
+              </div>
+              <h3>Data-Backed Insights</h3>
+              <p>
+                Leveraging AGMARKNET, weather APIs, and government agricultural
+                databases.
+              </p>
+            </div>
+
+            <div class="feature-card fade-in-up" style="--delay: 0.2s">
+              <div class="feature-icon">
+                <i class="fas fa-network-wired"></i>
+              </div>
+              <h3>Multi-Model Integration</h3>
+              <p>
+                Unified fusion of 5 specialized AI models for comprehensive
+                farming decisions.
+              </p>
+            </div>
+
+            <div class="feature-card fade-in-up" style="--delay: 0.3s">
+              <div class="feature-icon">
+                <i class="fas fa-handshake"></i>
+              </div>
+              <h3>Farmer-Friendly Output</h3>
+              <p>
+                Simple, actionable recommendations tailored to local conditions
+                and markets.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h3>Smart India Agri</h3>
+            <p>
+              Intelligent Agriculture Platform integrating AI-powered crop
+              recommendation, yield prediction, price forecasting, and soil
+              analytics.
+            </p>
+          </div>
+
+          <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+              <li>Crop Recommendation</li>
+              <li>Yield Predictor</li>
+              <li>Price Predictor</li>
+              <li>Soil Health</li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Technology</h4>
+            <ul>
+              <li>Machine Learning</li>
+              <li>Data Analytics</li>
+              <li>Cloud Platform</li>
+              <li>API Documentation</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>
+            &copy; 2024 Smart India Agri Intelligence System. All rights
+            reserved.
+          </p>
+          <div class="footer-social">
+            <span title="GitHub"><i class="fab fa-github"></i></span>
+            <span title="Twitter"><i class="fab fa-twitter"></i></span>
+            <span title="LinkedIn"><i class="fab fa-linkedin"></i></span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main-premium.js') }}"></script>
+  </body>
+</html>

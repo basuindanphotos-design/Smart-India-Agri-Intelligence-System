@@ -1,0 +1,50 @@
+{% extends "base.html" %} {% block title %}Model Data | Crop Recommendation
+Prediction{% endblock %} {% block content %}
+<div class="container" style="padding: 24px 0 36px">
+  <div class="section-head">
+    <h1>Models Data</h1>
+    <p>
+      Real-time model evaluation generated from active dataset and model
+      pipeline.
+    </p>
+    <p class="weather-updated">
+      Updated: {{ updated_at }} | Dataset: {{ dataset_file }}
+    </p>
+  </div>
+
+  <article class="about" style="margin-bottom: 14px">
+    <h3>Model Evaluation</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Training R²</th>
+            <th>Test R²</th>
+            <th>Training RMSE</th>
+            <th>Test RMSE</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in metrics %}
+          <tr>
+            <td>{{ row.model }}</td>
+            <td>{{ row.train_r2 }}</td>
+            <td>{{ row.test_r2 }}</td>
+            <td>{{ row.train_rmse }}</td>
+            <td>{{ row.test_rmse }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="about">
+    <h3>Model and Data Snapshot</h3>
+    <p><strong>Primary Model:</strong> {{ model_name }}</p>
+    <p><strong>Dataset File:</strong> {{ dataset_file }}</p>
+    <p><strong>Generated At:</strong> {{ updated_at }}</p>
+  </article>
+</div>
+{% endblock %}

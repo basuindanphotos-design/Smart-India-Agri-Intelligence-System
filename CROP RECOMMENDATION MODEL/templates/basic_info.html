@@ -1,0 +1,84 @@
+{% extends "base.html" %} {% block title %}Basic Info | Crop Recommendation
+Prediction{% endblock %} {% block content %}
+<div class="container" style="padding: 24px 0 36px">
+  <div class="section-head">
+    <h1>Basic Info</h1>
+    <p>Dynamic preview, schema and statistics of the active dataset.</p>
+    <p class="weather-updated">Updated: {{ updated_at }}</p>
+  </div>
+
+  <article class="about" style="margin-bottom: 14px">
+    <h3>Head of Dataset</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            {% for c in columns %}
+            <th>{{ c }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in head_rows %}
+          <tr>
+            {% for c in columns %}
+            <td>{{ row[c] }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="about" style="margin-bottom: 14px">
+    <h3>Describe</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            {% for c in describe_columns %}
+            <th>{{ c }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for metric, vals in describe_rows.items() %}
+          <tr>
+            <td>{{ metric }}</td>
+            {% for c in describe_columns %}
+            <td>{{ vals[c] }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="about">
+    <h3>Info</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Non-Null Count</th>
+            <th>Dtype</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in info_rows %}
+          <tr>
+            <td>{{ row.column }}</td>
+            <td>{{ row.non_null }}</td>
+            <td>{{ row.dtype }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</div>
+{% endblock %}

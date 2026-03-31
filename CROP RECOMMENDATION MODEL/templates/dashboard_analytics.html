@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}Analytics Dashboard | Crop Recommendation Prediction{% endblock %}
+{% block content %}
+<div class="container" style="padding: 24px 0 36px;">
+  <div class="section-head">
+    <h1>Analytics Dashboard</h1>
+    <p>Crop Recommendation dataset behavior and feature-driven model analytics.</p>
+    <p class="weather-updated">Last refreshed: {{ updated_at }} | Source: {{ dataset_file }}</p>
+  </div>
+
+  <div class="result-kpi-grid" style="margin-bottom: 16px;">
+    <article class="kpi-card"><h3>Total Records</h3><p>{{ payload.records }}</p></article>
+    <article class="kpi-card"><h3>Crops</h3><p>{{ payload.crops }}</p></article>
+    <article class="kpi-card"><h3>Seasons</h3><p>{{ payload.seasons }}</p></article>
+    <article class="kpi-card"><h3>Climate Types</h3><p>{{ payload.climate_types }}</p></article>
+  </div>
+
+  <div class="chart-grid" style="margin-bottom: 16px;">
+    <article class="chart-card"><h3>Season Distribution</h3><canvas id="seasonDistChart"></canvas></article>
+    <article class="chart-card"><h3>Average Yield by Crop Type</h3><canvas id="cropTypeYieldChart"></canvas></article>
+  </div>
+
+  <div class="chart-grid" style="margin-bottom: 16px;">
+    <article class="chart-card"><h3>Top Crops by Average Yield</h3><canvas id="topCropYieldChart"></canvas></article>
+    <article class="chart-card"><h3>Economic Use Share</h3><canvas id="economicUseChart"></canvas></article>
+  </div>
+
+  <div class="chart-grid" style="margin-bottom: 16px;">
+    <article class="chart-card"><h3>Top Area-Intensive Crops</h3><canvas id="topAreaChart"></canvas></article>
+    <article class="chart-card"><h3>Yield Spread (Max - Min)</h3><canvas id="yieldSpreadChart"></canvas></article>
+  </div>
+
+  <article class="about" style="margin-bottom: 16px;">
+    <h3>Model and Data Snapshot</h3>
+    <div class="market-grid">
+      <article class="info-card"><h3>Model Family</h3><p>Classification + Regression Pipeline</p></article>
+      <article class="info-card"><h3>Feature Profiles</h3><p>{{ payload.profile_combinations }} unique combinations</p></article>
+      <article class="info-card"><h3>Primary Target</h3><p>Recommended crop and expected yield</p></article>
+      <article class="info-card"><h3>Dataset Rows</h3><p>{{ payload.records }} samples</p></article>
+    </div>
+  </div>
+
+  <article class="about">
+    <h3>Data Coverage Report</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Crop</th><th>Records</th><th>Avg Yield</th><th>Avg Area</th></tr></thead>
+        <tbody>
+          {% for row in payload.coverage_rows %}
+          <tr><td>{{ row.crop }}</td><td>{{ row.records }}</td><td>{{ row.avg_yield }}</td><td>{{ row.avg_area }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+</div>
+
+<script id="seasonDistData" type="application/json">{{ payload.season_distribution | tojson }}</script>
+<script id="cropTypeYieldData" type="application/json">{{ payload.crop_type_yield | tojson }}</script>
+<script id="topCropYieldData" type="application/json">{{ payload.top_crop_yield | tojson }}</script>
+<script id="economicUseData" type="application/json">{{ payload.economic_use_share | tojson }}</script>
+<script id="topAreaData" type="application/json">{{ payload.top_area_crops | tojson }}</script>
+<script id="yieldSpreadData" type="application/json">{{ payload.yield_spread | tojson }}</script>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+const seasonDist = JSON.parse(document.getElementById('seasonDistData').textContent || '[]');
+const cropTypeYield = JSON.parse(document.getElementById('cropTypeYieldData').textContent || '[]');
+const topCropYield = JSON.parse(document.getElementById('topCropYieldData').textContent || '[]');
+const economicUse = JSON.parse(document.getElementById('economicUseData').textContent || '[]');
+const topArea = JSON.parse(document.getElementById('topAreaData').textContent || '[]');
+const yieldSpread = JSON.parse(document.getElementById('yieldSpreadData').textContent || '[]');
+
+if (seasonDist.length) {
+  new Chart(document.getElementById('seasonDistChart'), {
+    type: 'bar',
+    data: {
+      labels: seasonDist.map(x => x.season),
+      datasets: [{ label: 'Records', data: seasonDist.map(x => x.count), backgroundColor: '#2a9d56' }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+if (cropTypeYield.length) {
+  new Chart(document.getElementById('cropTypeYieldChart'), {
+    type: 'bar',
+    data: {
+      labels: cropTypeYield.map(x => x.crop_type),
+      datasets: [{ label: 'Avg Yield', data: cropTypeYield.map(x => x.yield), backgroundColor: '#f59e0b' }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+if (topCropYield.length) {
+  new Chart(document.getElementById('topCropYieldChart'), {
+    type: 'bar',
+    data: {
+      labels: topCropYield.map(x => x.crop),
+      datasets: [{ label: 'Avg Yield', data: topCropYield.map(x => x.yield), backgroundColor: '#60a5fa' }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+  });
+}
+
+if (economicUse.length) {
+  new Chart(document.getElementById('economicUseChart'), {
+    type: 'doughnut',
+    data: {
+      labels: economicUse.map(x => x.economic_use),
+      datasets: [{
+        label: 'Share',
+        data: economicUse.map(x => x.count),
+        backgroundColor: ['#16a34a', '#3b82f6', '#f59e0b', '#14b8a6', '#a855f7'],
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+
+if (topArea.length) {
+  new Chart(document.getElementById('topAreaChart'), {
+    type: 'bar',
+    data: {
+      labels: topArea.map(x => x.crop),
+      datasets: [{ label: 'Avg Area', data: topArea.map(x => x.area), backgroundColor: '#0f766e' }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+  });
+}
+
+if (yieldSpread.length) {
+  new Chart(document.getElementById('yieldSpreadChart'), {
+    type: 'bar',
+    data: {
+      labels: yieldSpread.map(x => x.crop),
+      datasets: [{ label: 'Yield Spread', data: yieldSpread.map(x => x.spread), backgroundColor: '#ef4444' }]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+}
+</script>
+{% endblock %}

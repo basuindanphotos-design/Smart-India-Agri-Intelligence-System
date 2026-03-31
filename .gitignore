@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+.env.local
+.env.ngrok
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Models and data
+*.pkl
+*.pickle
+*.csv
+*.joblib
+
+# Flask
+instance/
+.webassets-cache
+
+# Misc
+*.log

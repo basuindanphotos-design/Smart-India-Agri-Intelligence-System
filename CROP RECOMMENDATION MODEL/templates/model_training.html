@@ -1,0 +1,107 @@
+{% extends "base.html" %} {% block title %}Model Training | Project Workflow{%
+endblock %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="container workflow-shell">
+  <div class="workflow-meta">
+    <span>Step {{ workflow.step_number }} of {{ workflow.step_total }}</span>
+    <h1>Model Training</h1>
+    <p>
+      Algorithm benchmarking and training workflow using engineered
+      recommendation features.
+    </p>
+  </div>
+
+  <article class="about" style="margin-bottom: 16px">
+    <h3>Model Performance Comparison</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>R²</th>
+            <th>RMSE</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in benchmarks %}
+          <tr>
+            <td>{{ row.model }}</td>
+            <td>{{ row.r2 }}</td>
+            <td>{{ row.rmse }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <div class="chart-grid" style="margin-bottom: 16px">
+    <article class="chart-card">
+      <h3>Accuracy / Fitness (R²)</h3>
+      <canvas id="r2Chart"></canvas>
+    </article>
+    <article class="chart-card">
+      <h3>Error Comparison (RMSE)</h3>
+      <canvas id="rmseChart"></canvas>
+    </article>
+  </div>
+
+  <article class="about" style="margin-bottom: 16px">
+    <h3>Training Script Reference</h3>
+    <pre class="workflow-code">{{ season_model_script }}</pre>
+  </article>
+
+  <div class="workflow-nav-row">
+    {% if workflow.prev_step %}<a
+      class="ghost-btn"
+      href="{{ url_for(workflow.prev_step.endpoint) }}"
+      >Previous</a
+    >{% endif %} {% if workflow.next_step %}<a
+      class="cta-btn"
+      href="{{ url_for(workflow.next_step.endpoint) }}"
+      >Next Step</a
+    >{% endif %}
+  </div>
+</section>
+
+<script id="benchData" type="application/json">
+  {{ benchmarks | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+<script>
+  const b = JSON.parse(
+    document.getElementById("benchData").textContent || "[]",
+  );
+  if (b.length) {
+    new Chart(document.getElementById("r2Chart"), {
+      type: "bar",
+      data: {
+        labels: b.map((x) => x.model),
+        datasets: [
+          { label: "R²", data: b.map((x) => x.r2), backgroundColor: "#2a9d56" },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false },
+    });
+    new Chart(document.getElementById("rmseChart"), {
+      type: "bar",
+      data: {
+        labels: b.map((x) => x.model),
+        datasets: [
+          {
+            label: "RMSE",
+            data: b.map((x) => x.rmse),
+            backgroundColor: "#ef4444",
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false },
+    });
+  }
+</script>
+{% endblock %}

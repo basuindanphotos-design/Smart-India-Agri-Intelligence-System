@@ -1,0 +1,25 @@
+.advanced-analytics .mini-stat p {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.advanced-analytics .mini-stat h3 {
+  font-size: 1.25rem;
+}
+
+.plotly-holder {
+  min-height: 320px;
+  width: 100%;
+}
+
+#coverageTable td,
+#coverageTable th {
+  font-size: 0.86rem;
+}
+
+@media (max-width: 768px) {
+  .plotly-holder {
+    min-height: 280px;
+  }
+}

@@ -1,0 +1,56 @@
+{% extends 'base.html' %} {% block extra_head %}<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>{% endblock %} {% block content %}
+<section class="section-pad">
+  <div class="container workflow-detail-page">
+    <div class="workflow-page-head reveal-up">
+      <p class="workflow-kicker mb-2">Step 4</p>
+      <h1>Feature Engineering</h1>
+      <p>
+        Design and transformation of predictive variables driving yield
+        estimation.
+      </p>
+    </div>
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card panel-card h-100 reveal-up">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Engineered Signals</h2>
+            <ul class="list-clean">
+              <li>Climate-adjusted rainfall features</li>
+              <li>Season and crop category encoding</li>
+              <li>Regional agronomic context embedding</li>
+              <li>Pesticide and temperature interaction patterns</li>
+              <li>State/crop level historical priors</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card chart-card h-100 reveal-up">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Estimated Feature Influence</h2>
+            <div class="chart-wrap">
+              <canvas id="workflowFeatureImportanceChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="workflow-nav mt-4">
+      <a
+        class="btn btn-outline-success"
+        href="{{ url_for('workflow_eda_page') }}"
+        >Previous Step</a
+      ><a
+        class="btn btn-success"
+        href="{{ url_for('workflow_model_training_page') }}"
+        >Next Step</a
+      >
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

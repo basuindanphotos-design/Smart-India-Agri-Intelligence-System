@@ -1,0 +1,414 @@
+{% extends 'base.html' %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/dashboard.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="section-pad">
+  <div class="container">
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <p>Total Records</p>
+          <h3 data-counter-target="{{ summary_stats.total_records }}">0</h3>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <p>Total Crops</p>
+          <h3 data-counter-target="{{ summary_stats.total_crops }}">0</h3>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <p>Countries Covered</p>
+          <h3 data-counter-target="{{ summary_stats.countries_covered }}">0</h3>
+        </div>
+      </div>
+      <div class="col-6 col-lg-3">
+        <div class="stat-card">
+          <p>Feature Count</p>
+          <h3 data-counter-target="{{ summary_stats.feature_count }}">0</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <div class="card panel-card h-100">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Dataset Preview</h2>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead>
+                  <tr>
+                    <th>Area</th>
+                    <th>Crop</th>
+                    <th>Year</th>
+                    <th>Yield (hg/ha)</th>
+                    <th>Rainfall</th>
+                    <th>Pesticides</th>
+                    <th>Temperature</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for row in preview_records %}
+                  <tr>
+                    <td>{{ row.Area }}</td>
+                    <td>{{ row.Item }}</td>
+                    <td>{{ row.Year }}</td>
+                    <td>{{ row['hg/ha_yield'] }}</td>
+                    <td>{{ row.average_rain_fall_mm_per_year }}</td>
+                    <td>{{ row.pesticides_tonnes }}</td>
+                    <td>{{ row.avg_temp }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card panel-card h-100">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Dataset Insights</h2>
+            <p class="text-muted">
+              This panel highlights structural characteristics of your training
+              data.
+            </p>
+            <ul class="list-clean">
+              <li>
+                Balanced crop classes support robust multi-crop predictions.
+              </li>
+              <li>Long year span captures historical trend behavior.</li>
+              <li>Environmental features provide strong agronomic signals.</li>
+              <li>Geographic context improves localized decision support.</li>
+            </ul>
+            <p class="small text-muted mb-0">
+              Country-wise yield map is represented below as a ranked regional
+              yield view.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mt-1">
+      <div class="col-lg-6">
+        <div class="card chart-card">
+          <div class="card-body">
+            <div class="chart-toolbar">
+              <h3 class="h5 mb-0">Crop Distribution</h3>
+              <div class="d-flex gap-2">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-success chart-action-toggle"
+                  data-target-chart="cropDistChart"
+                  data-chart-types="doughnut,pie"
+                >
+                  View Toggle
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary chart-action-download"
+                  data-target-chart="cropDistChart"
+                >
+                  Download
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="cropDistChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card chart-card">
+          <div class="card-body">
+            <div class="chart-toolbar">
+              <h3 class="h5 mb-0">Area vs Production (Mean Yield)</h3>
+              <div class="d-flex gap-2">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-success chart-action-toggle"
+                  data-target-chart="areaProdChart"
+                  data-chart-types="bar,line"
+                >
+                  View Toggle
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary chart-action-download"
+                  data-target-chart="areaProdChart"
+                >
+                  Download
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrap chart-wrap--tall">
+              <canvas id="areaProdChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="advancedAnalyticsRoot" class="advanced-analytics mt-4">
+      <div
+        class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3"
+      >
+        <h2 class="h4 fw-bold mb-0">Advanced Data Analytics Dashboard</h2>
+        <a
+          class="btn btn-sm btn-outline-success"
+          href="{{ url_for('dataset_coverage_export') }}"
+          >Export Coverage CSV</a
+        >
+      </div>
+
+      <div class="row g-3 mb-4" id="statsCards">
+        <div class="col-6 col-lg-2">
+          <div class="stat-card mini-stat">
+            <p>Average Yield</p>
+            <h3 id="avgYield">-</h3>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="stat-card mini-stat">
+            <p>Median Yield</p>
+            <h3 id="medianYield">-</h3>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="stat-card mini-stat">
+            <p>Yield Std Dev</p>
+            <h3 id="stdYield">-</h3>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="stat-card mini-stat">
+            <p>Average Rainfall</p>
+            <h3 id="avgRain">-</h3>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="stat-card mini-stat">
+            <p>Average Temp</p>
+            <h3 id="avgTemp">-</h3>
+          </div>
+        </div>
+        <div class="col-6 col-lg-2">
+          <div class="stat-card mini-stat">
+            <p>Avg Pesticides</p>
+            <h3 id="avgPest">-</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <div class="chart-toolbar">
+                <h3 class="h5 mb-0">Yield Frequency Distribution</h3>
+                <div class="d-flex gap-2">
+                  <button
+                    class="btn btn-sm btn-outline-success chart-action-toggle"
+                    data-target-chart="yieldHistogramChart"
+                    data-chart-types="bar,line"
+                  >
+                    View Toggle
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-secondary chart-action-download"
+                    data-target-chart="yieldHistogramChart"
+                  >
+                    Download
+                  </button>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <canvas id="yieldHistogramChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <div class="chart-toolbar">
+                <h3 class="h5 mb-0">Top 10 Crops by Average Yield</h3>
+                <div class="d-flex gap-2">
+                  <button
+                    class="btn btn-sm btn-outline-success chart-action-toggle"
+                    data-target-chart="topCropsChart"
+                    data-chart-types="bar,line"
+                  >
+                    View Toggle
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-secondary chart-action-download"
+                    data-target-chart="topCropsChart"
+                  >
+                    Download
+                  </button>
+                </div>
+              </div>
+              <div class="chart-wrap chart-wrap--tall">
+                <canvas id="topCropsChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Area vs Yield Relationship</h3>
+              <div class="chart-wrap">
+                <canvas id="areaYieldScatterChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Climate Impact Analysis (Dual Axis)</h3>
+              <div class="chart-wrap">
+                <canvas id="climateImpactChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Yearly Yield Trend</h3>
+              <div class="chart-wrap">
+                <canvas id="yearlyYieldTrendChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Region Yield Ranking</h3>
+              <div class="chart-wrap chart-wrap--tall">
+                <canvas id="regionYieldRankChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Season Distribution</h3>
+              <div class="chart-wrap">
+                <canvas id="seasonDistributionChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Crop Category Yield Comparison</h3>
+              <div class="chart-wrap">
+                <canvas id="categoryYieldChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Feature Importance Analysis</h3>
+              <div class="chart-wrap">
+                <canvas id="featureImportanceChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="card chart-card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Correlation Heatmap</h3>
+              <div id="correlationHeatmap" class="plotly-holder"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-1">
+        <div class="col-lg-4">
+          <div class="card panel-card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Data Quality Panel</h3>
+              <ul class="list-clean mb-0">
+                <li>Missing Values: <strong id="dqMissing">-</strong></li>
+                <li>Duplicate Rows: <strong id="dqDuplicate">-</strong></li>
+                <li>Completeness: <strong id="dqCompleteness">-</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card panel-card">
+            <div class="card-body">
+              <div
+                class="d-flex justify-content-between align-items-center mb-3"
+              >
+                <h3 class="h5 mb-0">Data Coverage Report</h3>
+                <button
+                  id="coverageExportBtn"
+                  class="btn btn-sm btn-outline-success"
+                >
+                  Download CSV
+                </button>
+              </div>
+              <div class="table-responsive">
+                <table
+                  class="table table-hover align-middle"
+                  id="coverageTable"
+                >
+                  <thead>
+                    <tr>
+                      <th>Crop</th>
+                      <th>Records</th>
+                      <th>Average Yield</th>
+                      <th>Average Area</th>
+                      <th>Average Rainfall</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script id="chartDataPayload" type="application/json">
+  {{ chart_data | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="{{ url_for('static', filename='js/dataset_analytics.js') }}"></script>
+{% endblock %}

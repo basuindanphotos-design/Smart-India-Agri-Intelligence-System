@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Soil Health Intelligence Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/soil.css') }}"
+    />
+  </head>
+  <body>
+    <div class="bg-layer"></div>
+    <header class="site-header">
+      <nav class="navbar container">
+        <a class="brand" href="{{ url_for('index') }}"
+          >Smart India Agri Intelligence System</a
+        >
+        <ul class="nav-links">
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li>
+            <a href="{{ url_for('crop_recommendation_redirect') }}"
+              >Crop Recommendation</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('crop_yield_redirect') }}">Yield Predictor</a>
+          </li>
+          <li>
+            <a href="{{ url_for('crop_price_redirect') }}">Price Predictor</a>
+          </li>
+          <li>
+            <a class="active" href="{{ url_for('soil_health_redirect') }}"
+              >Soil Health</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('farmer_intelligence') }}"
+              >Farmer Intelligence</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container soil-layout reveal">
+      <section class="soil-input-panel">
+        <h1>Soil Health Intelligence Dashboard</h1>
+        <p>
+          Analyze NPK balance, pH, moisture, organic carbon, and conductivity to
+          generate scientific, farmer-friendly recommendations.
+        </p>
+
+        <form id="soil-form" class="soil-form">
+          <label class="soil-field">
+            Nitrogen (N)
+            <input type="number" step="0.1" name="nitrogen" required />
+          </label>
+          <label class="soil-field">
+            Phosphorus (P)
+            <input type="number" step="0.1" name="phosphorus" required />
+          </label>
+          <label class="soil-field">
+            Potassium (K)
+            <input type="number" step="0.1" name="potassium" required />
+          </label>
+          <label class="soil-field">
+            pH Level
+            <input type="number" step="0.1" name="ph" required />
+          </label>
+          <label class="soil-field">
+            Soil Moisture (%)
+            <input type="number" step="0.1" name="moisture" required />
+          </label>
+          <label class="soil-field">
+            Organic Carbon (%)
+            <input type="number" step="0.01" name="organic_carbon" required />
+          </label>
+          <label class="soil-field soil-field-wide">
+            Electrical Conductivity (dS/m)
+            <input
+              type="number"
+              step="0.01"
+              name="electrical_conductivity"
+              required
+            />
+          </label>
+
+          <div class="soil-form-actions">
+            <button type="submit" class="primary-btn">
+              Analyze Soil Health
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="soil-results-panel">
+        <article class="soil-card soil-score-card">
+          <div class="soil-head">
+            <h2>Soil Health Score</h2>
+            <p id="soil-grade">Run analysis to view score.</p>
+          </div>
+
+          <div class="score-track">
+            <div id="score-fill" class="score-fill" style="width: 0%"></div>
+          </div>
+          <p class="score-value"><span id="score-number">0</span>/100</p>
+        </article>
+
+        <article class="soil-card soil-driver-card">
+          <h3>Soil Driver Intelligence (Real-time Guidance)</h3>
+          <p id="driver-overview" class="driver-overview">
+            Enter values to see live agronomic interpretation for N, P, K, pH,
+            moisture, organic carbon, and conductivity.
+          </p>
+          <div id="driver-list" class="driver-list"></div>
+        </article>
+
+        <div class="soil-grid two-cols">
+          <article class="soil-card">
+            <h3>NPK Analysis</h3>
+            <div id="npk-bars" class="npk-bars"></div>
+          </article>
+          <article class="soil-card">
+            <h3>pH & Moisture Analysis</h3>
+            <p id="ph-meta">pH interpretation will appear here.</p>
+            <p id="moisture-meta">Moisture recommendation will appear here.</p>
+          </article>
+        </div>
+
+        <div class="soil-grid three-cols">
+          <article class="soil-card chart-wrap">
+            <h3>NPK Bar Chart</h3>
+            <canvas id="npkChart"></canvas>
+          </article>
+          <article class="soil-card chart-wrap">
+            <h3>Soil Parameter Radar</h3>
+            <canvas id="radarChart"></canvas>
+          </article>
+          <article class="soil-card chart-wrap">
+            <h3>Soil Health Gauge</h3>
+            <canvas id="gaugeChart"></canvas>
+          </article>
+        </div>
+
+        <div class="soil-grid two-cols">
+          <article class="soil-card">
+            <h3>Soil Fertility Insights</h3>
+            <ul id="advice-list" class="soil-list"></ul>
+          </article>
+          <article class="soil-card">
+            <h3>Soil Improvement Plan</h3>
+            <ul id="plan-list" class="soil-list"></ul>
+          </article>
+        </div>
+
+        <div class="soil-grid two-cols">
+          <article class="soil-card">
+            <h3>Suitable Crops</h3>
+            <div id="crop-tags" class="crop-tags"></div>
+            <p id="ml-crop-link" class="muted"></p>
+          </article>
+          <article class="soil-card">
+            <h3>Alert System</h3>
+            <div id="alert-cards" class="alert-cards"></div>
+          </article>
+        </div>
+
+        <article class="final-decision">
+          <h3>Farmer Summary</h3>
+          <p id="farmer-summary">
+            Summary will be generated after soil analysis.
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/soil.js') }}"></script>
+  </body>
+</html>

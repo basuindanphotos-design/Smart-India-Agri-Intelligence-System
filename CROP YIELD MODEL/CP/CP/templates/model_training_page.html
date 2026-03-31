@@ -1,0 +1,52 @@
+{% extends 'base.html' %} {% block extra_head %}<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>{% endblock %} {% block content %}
+<section class="section-pad">
+  <div class="container workflow-detail-page">
+    <div class="workflow-page-head reveal-up">
+      <p class="workflow-kicker mb-2">Step 5</p>
+      <h1>Model Training</h1>
+      <p>
+        Multiple algorithms trained and compared on the same split strategy.
+      </p>
+    </div>
+    <div class="card panel-card mb-4 reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-3">Models Trained</h2>
+        <div class="workflow-tags">
+          {% for m in model_metrics.all_models %}<span>{{ m.name }}</span>{%
+          endfor %}
+        </div>
+        <pre
+          class="workflow-code mt-3"
+        ><code>{{ training_snippet }}</code></pre>
+      </div>
+    </div>
+    <div class="card chart-card reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-3">Model Comparison (R² / MAE / RMSE)</h2>
+        <div class="chart-wrap chart-wrap--model">
+          <canvas id="modelCompareChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="workflow-nav mt-4">
+      <a
+        class="btn btn-outline-success"
+        href="{{ url_for('workflow_feature_engineering_page') }}"
+        >Previous Step</a
+      ><a
+        class="btn btn-success"
+        href="{{ url_for('workflow_model_evaluation_page') }}"
+        >Next Step</a
+      >
+    </div>
+  </div>
+</section>
+<script id="modelDataPayload" type="application/json">
+  {{ model_metrics | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

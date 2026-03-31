@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prediction Dashboard | AI Crop Prediction</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body class="dashboard-body">
+    <header class="site-header">
+      <nav class="navbar container">
+        <a href="{{ url_for('home') }}" class="brand"
+          ><span>🌱</span> AI Crop Prediction</a
+        >
+        <ul class="menu">
+          <li><a href="{{ url_for('home') }}#home">Home</a></li>
+          <li><a href="{{ url_for('home') }}#predictor">Crop Predictor</a></li>
+          <li><a href="{{ url_for('home') }}#market">Market Insights</a></li>
+          <li><a href="{{ url_for('home') }}#weather">Weather</a></li>
+          <li><a href="{{ url_for('home') }}#about">About Project</a></li>
+        </ul>
+        <a class="ghost-btn" href="{{ url_for('home') }}#predictor"
+          >New Prediction</a
+        >
+      </nav>
+    </header>
+
+    <main class="container dashboard-main">
+      {% if result and result.error is defined %}
+      <section class="error-panel">
+        <h2>Prediction Error</h2>
+        <p>{{ result.error }}</p>
+        <a class="cta-btn" href="{{ url_for('home') }}#predictor"
+          >Go Back to Form</a
+        >
+      </section>
+      {% else %}
+      <section class="result-hero reveal success-pop">
+        <div>
+          <p class="eyebrow">Prediction Result Dashboard</p>
+          <h1>Recommended Crop: {{ result.crop }}</h1>
+          <p>
+            Built from your farm inputs and AI inference for season {{
+            result.season }}.
+          </p>
+        </div>
+        <div class="result-kpi-grid">
+          <article class="kpi-card border-green">
+            <h3>🌱 Recommended Crop</h3>
+            <p>{{ result.crop }}</p>
+          </article>
+          <article class="kpi-card">
+            <h3>📈 Predicted Yield</h3>
+            <p>{{ result.yield }} tons / hectare</p>
+          </article>
+          <article class="kpi-card">
+            <h3>🏭 Estimated Production</h3>
+            <p>{{ result.production }} tons</p>
+          </article>
+          <article class="kpi-card">
+            <h3>🌦 Current Context</h3>
+            <p>
+              {{ result.temperature }}°C | {{ result.humidity }}% | {{
+              result.rainfall }} mm
+            </p>
+          </article>
+        </div>
+        <article class="profile-summary">
+          <h3>Profile Used For Recommendation</h3>
+          <p>
+            Season: {{ result.season }} | Type: {{ result.crop_type }} | Water:
+            {{ result.water_source }} | Climate: {{ result.climate_type }} |
+            Duration: {{ result.duration_type }} | Category:
+            {{ result.farming_system }} | Purpose: {{ result.economic_use }}
+          </p>
+        </article>
+      </section>
+
+      <section class="reveal">
+        <div class="section-head">
+          <h2>📊 Visual Analytics</h2>
+          <p>Model output translated into actionable farm intelligence through interactive visualizations.</p>
+        </div>
+        <div class="chart-grid">
+          <article class="chart-card">
+            <h3>Crop Suitability Comparison</h3>
+            <canvas id="suitabilityChart" loading="lazy"></canvas>
+          </article>
+          <article class="chart-card">
+            <h3>Environmental Impact</h3>
+            <canvas id="environmentChart" loading="lazy"></canvas>
+          </article>
+          <article class="chart-card full-width">
+            <h3>Production Estimation</h3>
+            <canvas id="productionChart" loading="lazy"></canvas>
+          </article>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <div class="section-head">
+          <h2>🌟 Farmer Insight Panel</h2>
+          <p>Simplified, practical guidance from AI predictions for real-world farming decisions.</p>
+        </div>
+        <div class="insight-grid">
+          <article class="insight-card">
+            <h3>🌱 Crop</h3>
+            <p>{{ result.insights[0] }}</p>
+          </article>
+          <article class="insight-card">
+            <h3>📈 Yield</h3>
+            <p>{{ result.insights[1] }}</p>
+          </article>
+          <article class="insight-card">
+            <h3>💰 Profit Direction</h3>
+            <p>{{ result.insights[2] }}</p>
+          </article>
+          <article class="insight-card">
+            <h3>📊 Yield Outlook</h3>
+            <p>{{ result.insights[3] }}</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="reveal">
+        <div class="section-head">
+          <h2>🎉 Smart Farmer Recommendations</h2>
+          <p>Actionable strategies for irrigation optimization, soil improvement, and fertilizer planning.</p>
+        </div>
+        <div class="market-grid">
+          <article class="info-card">
+            <h3>Best Irrigation Strategy</h3>
+            <p>{{ result.recommendations.irrigation }}</p>
+          </article>
+          <article class="info-card">
+            <h3>Soil Improvement</h3>
+            <p>{{ result.recommendations.soil }}</p>
+          </article>
+          <article class="info-card">
+            <h3>Fertilizer Recommendation</h3>
+            <p>{{ result.recommendations.fertilizer }}</p>
+          </article>
+        </div>
+      </section>
+
+      <script>
+        window.dashboardData = {{ result.charts | tojson }};
+      </script>
+      {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>

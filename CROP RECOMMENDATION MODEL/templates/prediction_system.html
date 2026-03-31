@@ -1,0 +1,87 @@
+{% extends "base.html" %} {% block title %}Prediction System | Project
+Workflow{% endblock %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="container workflow-shell">
+  <div class="workflow-meta">
+    <span>Step {{ workflow.step_number }} of {{ workflow.step_total }}</span>
+    <h1>Crop Recommendation Prediction</h1>
+    <p>
+      How the prediction engine processes user inputs into recommendation
+      output.
+    </p>
+  </div>
+
+  <div class="market-grid" style="margin-bottom: 16px">
+    <article class="info-card">
+      <h3>Input Features</h3>
+      <p>
+        Temperature, Humidity, Rainfall, Season, Land Area, and farm profile
+        attributes are transformed for inference.
+      </p>
+    </article>
+    <article class="info-card">
+      <h3>Prediction Pipeline</h3>
+      <p>
+        Input validation -> default filling -> feature encoding -> crop
+        classifier -> yield regressor -> insight generation.
+      </p>
+    </article>
+    <article class="info-card">
+      <h3>Result Generation</h3>
+      <p>
+        The app returns recommended crop, expected yield, production, visual
+        analytics, and farmer advisories.
+      </p>
+    </article>
+  </div>
+
+  <article class="about" style="margin-bottom: 16px">
+    <h3>Example Output</h3>
+    {% if has_result %}
+    <p><strong>Recommended Crop:</strong> {{ result.crop }}</p>
+    <p><strong>Expected Yield:</strong> {{ result.yield }} tons/hectare</p>
+    <p><strong>Estimated Production:</strong> {{ result.production }} tons</p>
+    {% else %}
+    <p>
+      No recent session prediction found. Run a prediction from the Predict page
+      to populate live example output.
+    </p>
+    {% endif %}
+  </article>
+
+  <article class="about">
+    <h3>Prediction Pipeline Diagram</h3>
+    <div class="workflow-pipe">
+      <div>User Input</div>
+      <span>-></span>
+      <div>Validation + Defaults</div>
+      <span>-></span>
+      <div>Feature Encoding</div>
+      <span>-></span>
+      <div>Crop Model</div>
+      <span>-></span>
+      <div>Yield Model</div>
+      <span>-></span>
+      <div>Recommendation Output</div>
+    </div>
+  </article>
+
+  <div class="workflow-nav-row">
+    {% if workflow.prev_step %}<a
+      class="ghost-btn"
+      href="{{ url_for(workflow.prev_step.endpoint) }}"
+      >Previous</a
+    >{% endif %} {% if workflow.next_step %}<a
+      class="cta-btn"
+      href="{{ url_for(workflow.next_step.endpoint) }}"
+      >Next Step</a
+    >{% endif %}
+  </div>
+</section>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

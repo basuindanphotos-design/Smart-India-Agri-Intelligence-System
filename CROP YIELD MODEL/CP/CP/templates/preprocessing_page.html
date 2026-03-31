@@ -1,0 +1,63 @@
+{% extends 'base.html' %} {% block extra_head %}<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>{% endblock %} {% block content %}
+<section class="section-pad">
+  <div class="container workflow-detail-page">
+    <div class="workflow-page-head reveal-up">
+      <p class="workflow-kicker mb-2">Step 2</p>
+      <h1>Data Preprocessing</h1>
+      <p>
+        Data cleaning, normalization, and encoding pipeline used before model
+        training.
+      </p>
+    </div>
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card panel-card h-100 reveal-up">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Operations Performed</h2>
+            <ul class="list-clean">
+              <li>Duplicate record removal</li>
+              <li>Missing value handling with median/robust fills</li>
+              <li>Range clipping for climate outliers</li>
+              <li>Categorical encoding through model preprocessor</li>
+              <li>Numerical scaling in training pipeline</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card panel-card h-100 reveal-up">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Preprocessing Code Snippet</h2>
+            <pre
+              class="workflow-code"
+            ><code>{{ preprocess_snippet }}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card panel-card reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-3">Preprocessing Flow</h2>
+        <div class="workflow-flow">
+          Raw CSVs <span>→</span> Cleaning <span>→</span> Missing Value Handling
+          <span>→</span> Encoding/Scaling <span>→</span> Model-Ready Matrix
+        </div>
+      </div>
+    </div>
+    <div class="workflow-nav mt-4">
+      <a
+        class="btn btn-outline-success"
+        href="{{ url_for('workflow_dataset_page') }}"
+        >Previous Step</a
+      ><a class="btn btn-success" href="{{ url_for('workflow_eda_page') }}"
+        >Next Step</a
+      >
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

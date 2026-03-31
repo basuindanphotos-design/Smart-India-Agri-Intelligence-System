@@ -1,0 +1,134 @@
+{% extends 'base.html' %} {% block title %}Crop Price Prediction{% endblock %}
+{% block content %}
+<section class="hero-section">
+  <div class="container py-5">
+    <div class="row align-items-center min-vh-100">
+      <div class="col-lg-7 reveal-up">
+        <p class="eyebrow">AI + Agriculture Intelligence</p>
+        <h1 class="display-4 hero-title">AI Powered Crop Price Prediction</h1>
+        <p class="lead text-light-emphasis mt-3">
+          Helping farmers and traders predict future crop prices using machine
+          learning.
+        </p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+          <a href="{{ url_for('predict_page') }}" class="btn btn-accent btn-lg"
+            >Predict Price</a
+          >
+          <a
+            href="{{ url_for('dashboard_page') }}"
+            class="btn btn-outline-light btn-lg"
+            >View Dashboard</a
+          >
+        </div>
+        <div class="row mt-5 g-3">
+          <div class="col-6 col-md-3">
+            <div class="metric-card">
+              <h3 id="homeRecords" class="counter" data-target="0">0</h3>
+              <p>Records</p>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="metric-card">
+              <h3 id="homeStates" class="counter" data-target="0">0</h3>
+              <p>States</p>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="metric-card">
+              <h3 id="homeMarkets" class="counter" data-target="0">0</h3>
+              <p>Markets</p>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="metric-card">
+              <h3 id="homeAiReady" class="counter" data-target="0">0</h3>
+              <p>AI Ready</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5 reveal-up mt-4 mt-lg-0">
+        <div class="hero-visual-card">
+          <h5>Live Data Pulse</h5>
+          <div class="live-pulse-grid">
+            <div>
+              <span>Dataset Updated</span>
+              <strong id="homeDatasetLastModified">--</strong>
+            </div>
+            <div>
+              <span>Model Used</span>
+              <strong id="homeModelName">--</strong>
+            </div>
+            <div>
+              <span>Model Trained</span>
+              <strong id="homeModelTrainedAt">--</strong>
+            </div>
+            <div>
+              <span>System Refresh</span>
+              <strong id="homeLiveUpdatedAt">--</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5 reveal-up">
+      <h2 class="section-title">Our Services</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4 reveal-up">
+        <div class="feature-card">
+          <i class="fa-solid fa-robot"></i>
+          <h5>AI Prediction</h5>
+          <p>
+            Predict future modal prices with trained machine learning models.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 reveal-up">
+        <div class="feature-card">
+          <i class="fa-solid fa-signal"></i>
+          <h5>Real-time Market Insights</h5>
+          <p>
+            Understand trends across states, markets and commodities quickly.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4 reveal-up">
+        <div class="feature-card">
+          <i class="fa-solid fa-chart-column"></i>
+          <h5>Data Visualization</h5>
+          <p>
+            Interactive dashboards for trends, comparisons and seasonal
+            behavior.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-6 reveal-up">
+        <div class="feature-card">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <h5>Historical Crop Analysis</h5>
+          <p>
+            Explore historical AGMARKNET-style market records for better
+            planning.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-6 reveal-up">
+        <div class="feature-card">
+          <i class="fa-solid fa-lightbulb"></i>
+          <h5>Smart Decision Making</h5>
+          <p>
+            Support farmers and traders with transparent, data-backed
+            predictions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

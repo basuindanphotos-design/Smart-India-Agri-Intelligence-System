@@ -1,0 +1,224 @@
+{% extends 'base.html' %} {% block content %}
+<section class="section-pad pt-4">
+  <div class="container">
+    <!-- Page header -->
+    <div class="hero-shell p-4 p-lg-5 mb-4">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+          <p class="text-uppercase small mb-2 opacity-75">About the Platform</p>
+          <h1 class="display-5 fw-bold mb-3">
+            Crop Yield Prediction &amp; Analytics
+          </h1>
+          <p class="mb-0 opacity-85">
+            An intelligent agricultural analytics platform that converts raw
+            climate and farming data into production forecasts — helping
+            farmers, researchers, and analysts make smarter, evidence-driven
+            decisions.
+          </p>
+        </div>
+        <div class="col-lg-4 text-center">
+          <span class="about-hero-icon"><i class="bi bi-flower1"></i></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mission card -->
+    <div class="row g-4 mb-4">
+      <div class="col-12">
+        <div class="card panel-card">
+          <div class="card-body p-4 p-lg-5">
+            <h2 class="h4 fw-bold mb-3">
+              <i class="bi bi-bullseye me-2 text-success"></i>Our Mission
+            </h2>
+            <p class="text-muted mb-0">
+              Agriculture feeds the world, yet most smallholder farmers lack
+              access to data-driven tools to anticipate yield outcomes before
+              the harvest season. This platform bridges that gap by combining
+              publicly available environmental datasets with machine learning
+              regression models, delivering actionable yield forecasts through a
+              clean and accessible web interface.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature cards -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="card panel-card h-100">
+          <div class="card-body p-4">
+            <div class="about-feature-icon mb-3"><i class="bi bi-cpu"></i></div>
+            <h3 class="h5 fw-bold">Machine Learning Core</h3>
+            <p class="text-muted mb-0">
+              Trained on multi-country agricultural records. The model learns
+              patterns across climate, pesticide usage, and geography to output
+              calibrated yield estimates.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card panel-card h-100">
+          <div class="card-body p-4">
+            <div class="about-feature-icon mb-3">
+              <i class="bi bi-bar-chart-line"></i>
+            </div>
+            <h3 class="h5 fw-bold">Interactive Analytics</h3>
+            <p class="text-muted mb-0">
+              Live Chart.js visualizations powered by the real training dataset
+              — explore crop distributions, rainfall correlations, temperature
+              impacts, and historical trends.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card panel-card h-100">
+          <div class="card-body p-4">
+            <div class="about-feature-icon mb-3">
+              <i class="bi bi-globe-central-south-asia"></i>
+            </div>
+            <h3 class="h5 fw-bold">Global Dataset Coverage</h3>
+            <p class="text-muted mb-0">
+              {{ summary_stats.countries_covered }} countries, {{
+              summary_stats.total_crops }} crop types, and {{
+              summary_stats.total_records }} yield records spanning decades of
+              agricultural history.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card panel-card h-100">
+          <div class="card-body p-4">
+            <div class="about-feature-icon mb-3">
+              <i class="bi bi-search"></i>
+            </div>
+            <h3 class="h5 fw-bold">Transparent Predictions</h3>
+            <p class="text-muted mb-0">
+              Every prediction comes with a plain-language explanation and
+              factor breakdown so farmers and analysts understand what is
+              driving the forecast.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card panel-card h-100">
+          <div class="card-body p-4">
+            <div class="about-feature-icon mb-3">
+              <i class="bi bi-phone"></i>
+            </div>
+            <h3 class="h5 fw-bold">Fully Responsive</h3>
+            <p class="text-muted mb-0">
+              The interface adapts seamlessly to desktop, tablet, and mobile —
+              designed for field use as much as for conference-room
+              presentations.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card panel-card h-100">
+          <div class="card-body p-4">
+            <div class="about-feature-icon mb-3">
+              <i class="bi bi-gear"></i>
+            </div>
+            <h3 class="h5 fw-bold">End-to-End Pipeline</h3>
+            <p class="text-muted mb-0">
+              From raw CSV ingestion through feature engineering, model
+              training, evaluation, and live API deployment — the full ML
+              lifecycle is documented in the Project Workflow section.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tech stack -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card panel-card h-100">
+          <div class="card-body p-4">
+            <h2 class="h4 fw-bold mb-3">
+              <i class="bi bi-stack me-2 text-success"></i>Technology Stack
+            </h2>
+            <ul class="list-clean">
+              <li>
+                <strong>Backend:</strong> Python Flask — lightweight
+                production-ready API server
+              </li>
+              <li>
+                <strong>ML:</strong> scikit-learn — {{ model_metrics.model_name
+                }} regression model
+              </li>
+              <li>
+                <strong>Data:</strong> pandas / NumPy — dataset wrangling and
+                feature preparation
+              </li>
+              <li>
+                <strong>Frontend:</strong> Bootstrap 5 + custom CSS —
+                responsive, mobile-first design
+              </li>
+              <li>
+                <strong>Charts:</strong> Chart.js — interactive canvas-based
+                data visualizations
+              </li>
+              <li>
+                <strong>Icons:</strong> Bootstrap Icons — consistent iconography
+                throughout
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card panel-card h-100">
+          <div class="card-body p-4">
+            <h2 class="h4 fw-bold mb-3">
+              <i class="bi bi-bar-chart-line me-2 text-success"></i>Model
+              Snapshot
+            </h2>
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="metric-block">
+                  <p class="metric-label">Algorithm</p>
+                  <p class="fw-bold mb-0">{{ model_metrics.model_name }}</p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="metric-block">
+                  <p class="metric-label">R² Score</p>
+                  <p class="fw-bold mb-0">
+                    {{ model_metrics.r2 if model_metrics.r2 is not none else
+                    'N/A' }}
+                  </p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="metric-block">
+                  <p class="metric-label">MAE (hg/ha)</p>
+                  <p class="fw-bold mb-0">
+                    {{ model_metrics.mae if model_metrics.mae is not none else
+                    'N/A' }}
+                  </p>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="metric-block">
+                  <p class="metric-label">RMSE (hg/ha)</p>
+                  <p class="fw-bold mb-0">
+                    {{ model_metrics.rmse if model_metrics.rmse is not none else
+                    'N/A' }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block title %}About | Crop Recommendation
+Prediction{% endblock %} {% block content %}
+<div class="container" style="padding: 24px 0 36px">
+  <div class="section-head">
+    <h1>About the Project</h1>
+    <p>
+      AI-powered crop recommendation system for farmer development and
+      explainable decisions.
+    </p>
+  </div>
+  <article class="about">
+    <h3>What this platform does</h3>
+    <p>
+      It recommends the best crop from your input profile and environmental
+      factors, then explains why that recommendation is suitable.
+    </p>
+    <h3>Why this is industry-level</h3>
+    <ul>
+      <li>
+        Separate pages for dataset, preprocessing, EDA, model evaluation and
+        prediction flow.
+      </li>
+      <li>
+        CSV upload, append/replace, export and paginated dataset exploration.
+      </li>
+      <li>Model metrics and transparency reports for trust and governance.</li>
+      <li>
+        Farmer-focused education panel covering irrigation, soil, fertilizer and
+        weather impact.
+      </li>
+    </ul>
+    <h3>Tech Stack</h3>
+    <ul>
+      <li>Frontend: HTML, CSS, JavaScript, Chart.js</li>
+      <li>Backend: Flask + Pandas + scikit-learn</li>
+      <li>Models: Crop classifier + yield regressor pipelines</li>
+    </ul>
+  </article>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %} {% block title %}Dataset Explorer | Crop
+Recommendation Prediction{% endblock %} {% block content %}
+<div class="container" style="padding: 24px 0 36px">
+  <div class="section-head">
+    <h1>Dataset Explorer</h1>
+    <p>
+      Search, sort and paginate the exact training dataset used by the model.
+    </p>
+  </div>
+
+  <article class="about" style="margin-bottom: 14px">
+    <form method="get" class="filter-grid">
+      <input type="text" name="q" value="{{ query }}" />
+      <select name="sort" id="sortSelect">
+        {% for col in columns %}
+        <option value="{{ col }}">{{ col }}</option>
+        {% endfor %}
+      </select>
+      <select name="order" id="orderSelect">
+        <option value="desc">DESC</option>
+        <option value="asc">ASC</option>
+      </select>
+      <button type="submit" class="submit-btn">Apply</button>
+    </form>
+    <script>
+      document.getElementById("sortSelect").value = "{{ sort_by }}";
+      document.getElementById("orderSelect").value = "{{ order }}";
+    </script>
+  </article>
+
+  <article class="about" style="margin-bottom: 14px">
+    <form
+      method="post"
+      action="{{ url_for('dataset_upload') }}"
+      enctype="multipart/form-data"
+      class="filter-grid"
+    >
+      <input type="file" name="dataset_file" accept=".csv" required />
+      <select name="mode">
+        <option value="append">Append to Current Dataset</option>
+        <option value="replace">Replace Dataset</option>
+      </select>
+      <button type="submit" class="ghost-btn">Upload CSV</button>
+      <a class="ghost-btn" href="{{ url_for('dataset_export') }}">Export CSV</a>
+    </form>
+  </article>
+
+  <article class="about">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            {% for c in columns %}
+            <th>{{ c }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in records %}
+          <tr>
+            {% for c in columns %}
+            <td>{{ row[c] }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="pager-row">
+      <span
+        >Page {{ page }} of {{ total_pages }} | Total records: {{ total_records
+        }}</span
+      >
+      <div>
+        {% if page > 1 %}<a
+          class="ghost-btn"
+          href="{{ url_for('dataset_explorer', q=query, sort=sort_by, order=order, page=page-1) }}"
+          >Previous</a
+        >{% endif %} {% if page < total_pages %}<a
+          class="ghost-btn"
+          href="{{ url_for('dataset_explorer', q=query, sort=sort_by, order=order, page=page+1) }}"
+          >Next</a
+        >{% endif %}
+      </div>
+    </div>
+  </article>
+</div>
+{% endblock %}

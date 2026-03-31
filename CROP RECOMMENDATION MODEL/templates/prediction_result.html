@@ -1,0 +1,274 @@
+{% extends "base.html" %} {% block title %}Prediction Result | Crop
+Recommendation Prediction{% endblock %} {% block content %}
+<div class="container dashboard-main">
+  {% if result and result.error is defined %}
+  <section class="error-panel">
+    <h2>Prediction Error</h2>
+    <p>{{ result.error }}</p>
+    <a class="cta-btn" href="{{ url_for('crop_predictor') }}">Back to Form</a>
+  </section>
+  {% else %}
+  <section class="result-hero reveal success-pop">
+    <div>
+      <p class="eyebrow">Prediction Result Dashboard</p>
+      <h1>Recommended Crop: {{ result.crop }}</h1>
+      <p>
+        Built from your farm profile and AI inference. Location: {{
+        result.location }}
+      </p>
+    </div>
+    <div class="result-kpi-grid">
+      <article class="kpi-card border-green">
+        <h3>Recommended Crop</h3>
+        <p>{{ result.crop }}</p>
+      </article>
+      <article class="kpi-card">
+        <h3>Predicted Yield</h3>
+        <p>{{ result.yield }} tons/hectare</p>
+      </article>
+      <article class="kpi-card">
+        <h3>Estimated Production</h3>
+        <p>{{ result.production }} tons</p>
+      </article>
+      <article class="kpi-card">
+        <h3>Predicted Price</h3>
+        <p>INR {{ result.price_per_ton }} / ton</p>
+      </article>
+      <article class="kpi-card">
+        <h3>Estimated Revenue</h3>
+        <p>INR {{ result.estimated_revenue }}</p>
+      </article>
+      <article class="kpi-card">
+        <h3>Current Context</h3>
+        <p>
+          {{ result.temperature }} deg C | {{ result.humidity }}% | {{
+          result.rainfall }} mm
+        </p>
+      </article>
+    </div>
+    <article class="profile-summary">
+      <h3>Input Profile Summary</h3>
+      <p>
+        Season: {{ result.season }} | Type: {{ result.crop_type }} | Water: {{
+        result.water_source }} | Climate: {{ result.climate_type }} | Duration:
+        {{ result.duration_type }} | Category: {{ result.farming_system }} |
+        Purpose: {{ result.economic_use }}
+      </p>
+    </article>
+  </section>
+
+  <section class="reveal">
+    <div class="section-head">
+      <h2>Visual Analytics</h2>
+      <p>Model output translated into practical farm intelligence.</p>
+    </div>
+    <div class="chart-grid">
+      <article class="chart-card">
+        <h3>Crop Suitability Comparison</h3>
+        <canvas id="suitabilityChart"></canvas>
+      </article>
+      <article class="chart-card">
+        <h3>Environmental Impact</h3>
+        <canvas id="environmentChart"></canvas>
+      </article>
+      <article class="chart-card full-width">
+        <h3>Production Estimation</h3>
+        <canvas id="productionChart"></canvas>
+      </article>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="section-head">
+      <h2><i class="fa-solid fa-tower-broadcast"></i> Input Factor Analysis</h2>
+      <p>
+        How your specific inputs dynamically shape the AI recommendation quality
+        and risk profile.
+      </p>
+    </div>
+    <div class="chart-grid">
+      <article class="chart-card">
+        <h3>Factor Influence Radar</h3>
+        <canvas id="radarChart"></canvas>
+      </article>
+      <article class="chart-card">
+        <h3>Risk Assessment</h3>
+        <canvas id="riskChart"></canvas>
+      </article>
+      <article class="chart-card full-width">
+        <h3>Yield Projection by Area Scale</h3>
+        <canvas id="projectionChart"></canvas>
+      </article>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="section-head">
+      <h2>Farmer Insight Panel</h2>
+      <p>Simple guidance from model output for better farm decisions.</p>
+    </div>
+    {% set insight_icons = { 'Crop Recommendation': 'fa-seedling', 'Production
+    Estimate': 'fa-industry', 'Weather Assessment': 'fa-cloud-sun-rain', 'Yield
+    Forecast': 'fa-chart-line' } %}
+    <div class="insight-grid">
+      {% for insight in result.insights %}
+      <article class="insight-card">
+        <h3>
+          <i
+            class="fa-solid {{ insight_icons.get(insight.title, 'fa-circle-info') }}"
+          ></i>
+          {{ insight.title }}
+        </h3>
+        <p>{{ insight.content }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="section-head">
+      <h2><i class="fa-solid fa-folder-open"></i> Pictorial Overview</h2>
+      <p>
+        Key crop metrics and characteristics as dynamic snapshot cards driven by
+        your inputs.
+      </p>
+    </div>
+    {% set pictorial_icons = { 'Water Need': 'fa-droplet', 'Climate Match':
+    'fa-temperature-three-quarters', 'Harvest Timeline': 'fa-stopwatch', 'Yield
+    Rating': 'fa-chart-column', 'Crop Category': 'fa-seedling', 'Prediction
+    Confidence': 'fa-bullseye' } %}
+    <div class="pictorial-grid">
+      {% for card in result.pictorial %}
+      <article
+        class="kpi-card"
+        style="text-align: center; padding: 1.6rem 1rem"
+      >
+        <div style="font-size: 2.1rem; margin-bottom: 0.4rem">
+          <i
+            class="fa-solid {{ pictorial_icons.get(card.title, 'fa-circle-info') }}"
+          ></i>
+        </div>
+        <h3
+          style="
+            margin: 0 0 0.3rem;
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+          "
+        >
+          {{ card.title }}
+        </h3>
+        <p
+          style="
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--primary-deep);
+            margin: 0 0 0.25rem;
+          "
+        >
+          {{ card.value }}
+        </p>
+        <p style="font-size: 0.8rem; color: var(--muted); margin: 0">
+          {{ card.desc }}
+        </p>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="section-head">
+      <h2>Smart Farmer Recommendations</h2>
+      <p>Actionable field-level recommendations.</p>
+    </div>
+    <div class="market-grid">
+      <article class="info-card">
+        <h3>Irrigation Strategy</h3>
+        <p>{{ result.recommendations.irrigation }}</p>
+      </article>
+      <article class="info-card">
+        <h3>Soil Management</h3>
+        <p>{{ result.recommendations.soil }}</p>
+      </article>
+      <article class="info-card">
+        <h3>Fertilizer Plan</h3>
+        <p>{{ result.recommendations.fertilizer }}</p>
+      </article>
+      {% if result.recommendations.temperature %}
+      <article class="info-card">
+        <h3>Temperature Management</h3>
+        <p>{{ result.recommendations.temperature }}</p>
+      </article>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="section-head">
+      <h2><i class="fa-solid fa-seedling"></i> Crop Growing Guide</h2>
+      <p>
+        Step-by-step cultivation plan generated from your specific inputs for {{
+        result.crop }}.
+      </p>
+    </div>
+    {% set step_icons = { 'Sowing': 'fa-seedling', 'Water Management':
+    'fa-droplet', 'Crop Care': 'fa-wheat-awn', 'Harvest':
+    'fa-wheat-awn-circle-exclamation' } %}
+    <div class="market-grid">
+      {% for step in result.crop_profile.steps %}
+      <article class="info-card">
+        <h3>
+          <i
+            class="fa-solid {{ step_icons.get(step.title, 'fa-circle-info') }}"
+          ></i>
+          {{ step.title }}
+        </h3>
+        <p>{{ step.text }}</p>
+      </article>
+      {% endfor %}
+      <article class="info-card" style="grid-column: 1/-1">
+        <h3><i class="fa-solid fa-sack-dollar"></i> Market Outlook</h3>
+        <p>{{ result.crop_profile.market }}</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="section-head">
+      <h2>
+        <i class="fa-solid fa-clipboard-list"></i> Data Intelligence Report
+      </h2>
+      <p>
+        AI-generated analysis covering risk, climate suitability, market
+        context, and prediction confidence.
+      </p>
+    </div>
+    <div class="analysis-grid">
+      <article class="about">
+        <h3>
+          <i class="fa-solid fa-triangle-exclamation"></i> Risk Assessment
+        </h3>
+        <p>{{ result.textual.risk }}</p>
+      </article>
+      <article class="about">
+        <h3><i class="fa-solid fa-earth-asia"></i> Climate Suitability</h3>
+        <p>{{ result.textual.climate }}</p>
+      </article>
+      <article class="about">
+        <h3><i class="fa-solid fa-chart-simple"></i> Market Analysis</h3>
+        <p>{{ result.textual.market }}</p>
+      </article>
+      <article class="about">
+        <h3><i class="fa-solid fa-bullseye"></i> Prediction Confidence</h3>
+        <p>{{ result.textual.confidence }}</p>
+      </article>
+    </div>
+  </section>
+
+  <script>
+    window.dashboardData = {{ result.charts | tojson }};
+  </script>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %} {% block title %}Crop Recommendation Prediction{%
+endblock %} {% block content %}
+<section class="hero container reveal">
+  <div class="hero-copy">
+    <p class="eyebrow">AGRICULTURE INTELLIGENCE</p>
+    <h1>Crop Recommendation Prediction</h1>
+    <p>
+      Helping farmers understand the best crop for their land by combining
+      environmental factors, profile attributes, and model intelligence with
+      transparent educational insights.
+    </p>
+    <div class="home-hero-actions">
+      <a href="{{ url_for('crop_predictor') }}" class="cta-btn">Predict Crop</a>
+      <a href="{{ url_for('dashboard') }}" class="ghost-btn">View Dashboard</a>
+    </div>
+    <div class="home-trust-strip">
+      <span>Live dataset linked</span>
+      <span>Explainable outputs</span>
+      <span>Workflow transparency</span>
+    </div>
+  </div>
+  <div class="hero-art">
+    <div class="hero-badge">Live Data Pulse</div>
+    <div class="home-pulse-grid">
+      <article>
+        <h3>{{ stats.records }}</h3>
+        <p>Total Records</p>
+      </article>
+      <article>
+        <h3>{{ stats.crops }}</h3>
+        <p>Unique Crops</p>
+      </article>
+      <article>
+        <h3>{{ stats.seasons }}</h3>
+        <p>Season Types</p>
+      </article>
+      <article>
+        <h3>{{ stats.climate_types }}</h3>
+        <p>Climate Types</p>
+      </article>
+    </div>
+    <p class="weather-updated home-dataset-meta">
+      Dataset: {{ dataset_path }} | Updated: {{ dataset_updated }}
+    </p>
+  </div>
+</section>
+
+<section class="container reveal">
+  <div class="section-head">
+    <h2>Our Services</h2>
+    <p>Industry-grade modules for model transparency and farmer education.</p>
+  </div>
+  <div class="market-grid">
+    <article class="info-card home-service-card">
+      <h3>AI Prediction</h3>
+      <p>
+        Get crop recommendation, yield estimate and production forecast from
+        trained models.
+      </p>
+      <small>Classifier + Regressor pipeline</small>
+    </article>
+    <article class="info-card home-service-card">
+      <h3>Real-time Insights</h3>
+      <p>
+        Understand trends across crop groups and seasonal patterns using
+        dashboards.
+      </p>
+      <small>Live charts and analytics</small>
+    </article>
+    <article class="info-card home-service-card">
+      <h3>Data Visualization</h3>
+      <p>
+        Interactive charts for distributions, relationships, and model behavior.
+      </p>
+      <small>Chart.js powered visual layer</small>
+    </article>
+    <article class="info-card home-service-card">
+      <h3>Dataset Explorer</h3>
+      <p>
+        Search, sort, paginate, export and upload dataset records used by the
+        model.
+      </p>
+      <small>Operational data controls</small>
+    </article>
+    <article class="info-card home-service-card">
+      <h3>Pipeline Transparency</h3>
+      <p>Workflow pages explain each stage from dataset to deployment.</p>
+      <small>Project workflow module</small>
+    </article>
+    <article class="info-card home-service-card">
+      <h3>Farmer Guidance</h3>
+      <p>
+        Recommendations include irrigation, soil, fertilizer, and climate
+        suggestions.
+      </p>
+      <small>Actionable field intelligence</small>
+    </article>
+  </div>
+</section>
+{% endblock %}

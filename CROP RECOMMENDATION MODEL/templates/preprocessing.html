@@ -1,0 +1,115 @@
+{% extends "base.html" %} {% block title %}Data Preprocessing | Project
+Workflow{% endblock %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="container workflow-shell">
+  <div class="workflow-meta">
+    <span>Step {{ workflow.step_number }} of {{ workflow.step_total }}</span>
+    <h1>Data Preprocessing</h1>
+    <p>
+      Cleaning, missing-value strategy, and encoding preparation for robust
+      model training.
+    </p>
+  </div>
+
+  <div class="workflow-pipe" style="margin-bottom: 16px">
+    <div>Raw Dataset</div>
+    <span>-></span>
+    <div>Missing Value Check</div>
+    <span>-></span>
+    <div>Category Encoding</div>
+    <span>-></span>
+    <div>Feature Matrix</div>
+  </div>
+
+  <article class="about" style="margin-bottom: 14px">
+    <h3>Null Values Before</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Null Values</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in before_rows %}
+          <tr>
+            <td>{{ row.column }}</td>
+            <td>{{ row.null_values }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="about" style="margin-bottom: 14px">
+    <h3>Null Values After</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Column</th>
+            <th>Null Values</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in after_rows %}
+          <tr>
+            <td>{{ row.column }}</td>
+            <td>{{ row.null_values }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="about" style="margin-bottom: 14px">
+    <h3>Preprocessing Script Reference</h3>
+    <pre class="workflow-code">{{ code_excerpt }}</pre>
+  </article>
+
+  <article class="about">
+    <h3>Preprocessed Preview</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            {% for c in columns %}
+            <th>{{ c }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in preview_rows %}
+          <tr>
+            {% for c in columns %}
+            <td>{{ row[c] }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <div class="workflow-nav-row">
+    {% if workflow.prev_step %}<a
+      class="ghost-btn"
+      href="{{ url_for(workflow.prev_step.endpoint) }}"
+      >Previous</a
+    >{% endif %} {% if workflow.next_step %}<a
+      class="cta-btn"
+      href="{{ url_for(workflow.next_step.endpoint) }}"
+      >Next Step</a
+    >{% endif %}
+  </div>
+</section>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

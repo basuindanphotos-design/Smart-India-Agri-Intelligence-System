@@ -1,0 +1,312 @@
+{% extends 'base.html' %} {% block title %}Live Monitoring & Optimization | Crop
+Price Model{% endblock %} {% block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>Live Monitoring &amp; Optimization</h2>
+    <p>
+      Monitor model health, data freshness, and optimization priorities to keep
+      crop-price predictions reliable in production.
+    </p>
+    <small id="lmoUpdatedAt" class="text-muted"></small>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="lmoAiReady">--</h4>
+        <span>AI Readiness</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="lmoRecords">--</h4>
+        <span>Total Records</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="lmoStates">--</h4>
+        <span>States / UTs</span>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="lmoMarkets">--</h4>
+        <span>Markets</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="glass-card p-4 h-100">
+        <h5 class="mb-3">Monitoring Health Summary</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="panel-card h-100">
+              <h6 class="mb-2">Model Reliability</h6>
+              <p class="small text-muted mb-1" id="lmoReliabilityText">--</p>
+              <div class="progress" style="height: 12px">
+                <div
+                  id="lmoReliabilityBar"
+                  class="progress-bar bg-success"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="panel-card h-100">
+              <h6 class="mb-2">Data Freshness</h6>
+              <p class="small text-muted mb-1" id="lmoFreshnessText">--</p>
+              <div class="progress" style="height: 12px">
+                <div
+                  id="lmoFreshnessBar"
+                  class="progress-bar bg-info"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="panel-card h-100">
+              <h6 class="mb-2">Optimization Status</h6>
+              <p class="small text-muted mb-0" id="lmoOptimizationStatus">--</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="glass-card p-4 h-100">
+        <h5 class="mb-2">Model Runtime Snapshot</h5>
+        <div class="small text-muted">
+          <div class="mb-2">
+            <strong>Model:</strong> <span id="lmoModelName">--</span>
+          </div>
+          <div class="mb-2">
+            <strong>Trained At:</strong> <span id="lmoTrainedAt">--</span>
+          </div>
+          <div class="mb-2">
+            <strong>Dataset Last Modified:</strong>
+            <span id="lmoDatasetModified">--</span>
+          </div>
+          <div class="mb-2">
+            <strong>Real Rows:</strong> <span id="lmoRealRows">--</span>
+          </div>
+          <div class="mb-2">
+            <strong>Synthetic Rows:</strong>
+            <span id="lmoSyntheticRows">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h5>Commodity Spread Risk Monitor</h5>
+        <canvas id="lmoSpreadChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h5>State Data Coverage (Top 10)</h5>
+        <canvas id="lmoStateCoverageChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">Optimization Queue</h5>
+        <p class="small text-muted mb-2">
+          Automatically generated priorities from current data and model
+          signals.
+        </p>
+        <ul id="lmoQueue" class="small mb-0"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %} {% block scripts %}
+<script>
+  (async function () {
+    const fmtNum = (v) => Number(v || 0).toLocaleString();
+    const queueEl = document.getElementById("lmoQueue");
+
+    try {
+      const [overviewRes, dashRes] = await Promise.all([
+        fetch("/api/live_overview"),
+        fetch("/api/dashboard_data"),
+      ]);
+      const overview = await overviewRes.json();
+      const dash = await dashRes.json();
+
+      document.getElementById("lmoUpdatedAt").textContent =
+        "Updated at: " +
+        (overview.updated_at || dash?.meta?.updated_at || "--");
+
+      document.getElementById("lmoAiReady").textContent =
+        String(overview?.stats?.ai_ready ?? "--") + "%";
+      document.getElementById("lmoRecords").textContent = fmtNum(
+        overview?.stats?.records,
+      );
+      document.getElementById("lmoStates").textContent = fmtNum(
+        overview?.stats?.states,
+      );
+      document.getElementById("lmoMarkets").textContent = fmtNum(
+        overview?.stats?.markets,
+      );
+
+      document.getElementById("lmoModelName").textContent =
+        overview?.model?.name || dash?.meta?.model_name || "--";
+      document.getElementById("lmoTrainedAt").textContent =
+        overview?.model?.trained_at || dash?.meta?.trained_at || "--";
+      document.getElementById("lmoDatasetModified").textContent =
+        overview?.dataset_last_modified ||
+        dash?.meta?.dataset_last_modified ||
+        "--";
+      document.getElementById("lmoRealRows").textContent = fmtNum(
+        dash?.stats?.real_rows,
+      );
+      document.getElementById("lmoSyntheticRows").textContent = fmtNum(
+        dash?.stats?.synthetic_rows,
+      );
+
+      const reliabilityBar = document.getElementById("lmoReliabilityBar");
+      const reliabilityText = document.getElementById("lmoReliabilityText");
+      const freshnessBar = document.getElementById("lmoFreshnessBar");
+      const freshnessText = document.getElementById("lmoFreshnessText");
+      const optimizationStatus = document.getElementById(
+        "lmoOptimizationStatus",
+      );
+
+      const aiReady = Number(overview?.stats?.ai_ready || 0);
+      const records = Number(overview?.stats?.records || 0);
+      const realRows = Number(dash?.stats?.real_rows || 0);
+      const realShare = records > 0 ? (realRows / records) * 100 : 0;
+
+      if (reliabilityBar && reliabilityText) {
+        reliabilityBar.style.width = `${Math.max(0, Math.min(100, aiReady))}%`;
+        reliabilityText.textContent = `Current reliability score: ${aiReady}%`;
+      }
+
+      if (freshnessBar && freshnessText) {
+        const freshnessScore = Math.max(
+          0,
+          Math.min(100, Math.round(realShare)),
+        );
+        freshnessBar.style.width = `${freshnessScore}%`;
+        freshnessText.textContent = `Real-data share: ${freshnessScore}%`;
+      }
+
+      if (optimizationStatus) {
+        optimizationStatus.textContent =
+          aiReady >= 80 && realShare >= 60
+            ? "System is stable. Continue weekly retraining and routine coverage audits."
+            : "System needs optimization. Improve real-row coverage and retrain after fresh market uploads.";
+      }
+
+      const spreadCtx = document.getElementById("lmoSpreadChart");
+      if (spreadCtx) {
+        new Chart(spreadCtx, {
+          type: "bar",
+          data: {
+            labels: (dash?.spread?.labels || []).slice(0, 8),
+            datasets: [
+              {
+                label: "Avg Spread (Max-Min)",
+                data: (dash?.spread?.values || []).slice(0, 8),
+                backgroundColor: "rgba(255, 160, 0, 0.65)",
+                borderColor: "rgba(255, 160, 0, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } },
+          },
+        });
+      }
+
+      const stateCtx = document.getElementById("lmoStateCoverageChart");
+      if (stateCtx) {
+        const rows = (dash?.coverage?.rows || []).slice(0, 10);
+        new Chart(stateCtx, {
+          type: "bar",
+          data: {
+            labels: rows.map((r) => r.State),
+            datasets: [
+              {
+                label: "Records",
+                data: rows.map((r) => r.records || 0),
+                backgroundColor: "rgba(102, 187, 106, 0.7)",
+                borderColor: "rgba(56, 142, 60, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { x: { beginAtZero: true } },
+          },
+        });
+      }
+
+      if (queueEl) {
+        const aiReady = Number(overview?.stats?.ai_ready || 0);
+        const records = Number(overview?.stats?.records || 0);
+        const realRows = Number(dash?.stats?.real_rows || 0);
+        const synthRows = Number(dash?.stats?.synthetic_rows || 0);
+        const realShare = records > 0 ? (realRows / records) * 100 : 0;
+        const topSpreadCommodity =
+          dash?.spread?.labels?.[0] || "Top spread commodity";
+
+        const queue = [];
+        if (aiReady < 75) {
+          queue.push(
+            "Priority 1: Retrain model after enriching underrepresented market-state combinations.",
+          );
+        } else {
+          queue.push(
+            "Priority 1: Maintain weekly retraining cadence and monitor drift in monthly trend chart.",
+          );
+        }
+
+        if (realShare < 60) {
+          queue.push(
+            "Priority 2: Increase real mandi data share to reduce synthetic-data bias.",
+          );
+        } else {
+          queue.push(
+            "Priority 2: Keep data freshness checks active; real data share is in a healthy range.",
+          );
+        }
+
+        queue.push(
+          `Priority 3: Review ${topSpreadCommodity} spread volatility and tighten alert thresholds for rapid price swings.`,
+        );
+        queue.push(
+          "Priority 4: Validate top districts quarterly for sudden market behavior changes.",
+        );
+
+        queueEl.innerHTML = queue
+          .map((item) => `<li class=\"mb-2\">${item}</li>`)
+          .join("");
+      }
+    } catch (_) {
+      document.getElementById("lmoUpdatedAt").textContent =
+        "Unable to load monitoring data right now.";
+      if (queueEl) {
+        queueEl.innerHTML =
+          "<li>Monitoring service is temporarily unavailable. Please refresh in a few seconds.</li>";
+      }
+    }
+  })();
+</script>
+{% endblock %}

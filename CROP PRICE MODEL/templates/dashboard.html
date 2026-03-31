@@ -1,0 +1,132 @@
+{% extends 'base.html' %} {% block title %}Dashboard | Crop Price Model{%
+endblock %} {% block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>Analytics Dashboard</h2>
+    <p>Price trends, commodity behavior and state-wise average analysis.</p>
+    <small id="dashboardUpdatedAt" class="text-muted"></small>
+  </div>
+
+  <div class="row g-3 mb-4" id="statsRow">
+    <div class="col-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="statRecords">0</h4>
+        <span>Total Records</span>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="statStates">0</h4>
+        <span>States</span>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="statMarkets">0</h4>
+        <span>Markets</span>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="metric-mini">
+        <h4 id="statCommodities">0</h4>
+        <span>Commodities</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="glass-card p-3">
+        <h5>Price Trends Graph</h5>
+        <canvas id="trendChart" height="120"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="glass-card p-3">
+        <h5>Monthly Price Analysis</h5>
+        <canvas id="monthlyChart" height="120"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h5>Commodity Comparison Chart</h5>
+        <canvas id="commodityChart" height="120"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h5>Average Price by State</h5>
+        <canvas id="stateChart" height="120"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h5>Top District Price Signals</h5>
+        <canvas id="districtChart" height="120"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="glass-card p-3">
+        <h5>Commodity Price Spread (Max-Min)</h5>
+        <canvas id="spreadChart" height="120"></canvas>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="glass-card p-3">
+        <h5>Model and Data Snapshot</h5>
+        <div class="row g-3 small text-muted">
+          <div class="col-md-4">
+            <strong class="text-dark">Model:</strong>
+            <span id="dashModelName">--</span>
+          </div>
+          <div class="col-md-4">
+            <strong class="text-dark">Model Trained At:</strong>
+            <span id="dashModelTrainedAt">--</span>
+          </div>
+          <div class="col-md-4">
+            <strong class="text-dark">Dataset Last Modified:</strong>
+            <span id="dashDatasetModifiedAt">--</span>
+          </div>
+          <div class="col-md-4">
+            <strong class="text-dark">Real Rows:</strong>
+            <span id="dashRealRows">--</span>
+          </div>
+          <div class="col-md-4">
+            <strong class="text-dark">Synthetic Rows:</strong>
+            <span id="dashSyntheticRows">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="glass-card p-3">
+        <div
+          class="d-flex justify-content-between align-items-center flex-wrap gap-2"
+        >
+          <h5 class="mb-0">Data Coverage Report</h5>
+          <button id="exportCoverageCsv" class="btn btn-outline-success btn-sm">
+            Export CSV
+          </button>
+        </div>
+        <p class="small text-muted mb-2">
+          State-wise availability of districts, markets and total records in the
+          current training dataset.
+        </p>
+        <div class="table-responsive">
+          <table class="table table-sm table-striped align-middle mb-0">
+            <thead>
+              <tr>
+                <th>State / UT</th>
+                <th>Districts</th>
+                <th>Markets</th>
+                <th>Records</th>
+              </tr>
+            </thead>
+            <tbody id="coverageTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

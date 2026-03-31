@@ -1,0 +1,65 @@
+{% extends 'base.html' %} {% block extra_head %}<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>{% endblock %} {% block content %}
+<section class="section-pad">
+  <div class="container workflow-detail-page">
+    <div class="workflow-page-head reveal-up">
+      <p class="workflow-kicker mb-2">Step 8</p>
+      <h1>Web Application Deployment</h1>
+      <p>
+        Serving ML predictions through a production-style Flask application.
+      </p>
+    </div>
+    <div class="card panel-card mb-4 reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-3">System Architecture</h2>
+        <div class="workflow-flow vertical">
+          User Interface (Forms + Dashboard) <span>↓</span> Flask Server Routes
+          / APIs <span>↓</span> ML Model Bundle + Preprocessor
+          <span>↓</span> Prediction Response + Visual Insights
+        </div>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card panel-card h-100 reveal-up">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Backend Components</h2>
+            <ul class="list-clean">
+              <li>Flask routing and template rendering</li>
+              <li>/api/predict for JSON inference</li>
+              <li>Shared model artifacts loaded at startup</li>
+              <li>Dynamic dashboard context generation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card panel-card h-100 reveal-up">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Frontend Components</h2>
+            <ul class="list-clean">
+              <li>Bootstrap card-driven UI</li>
+              <li>Chart.js data visualizations</li>
+              <li>Interactive workflow and model pages</li>
+              <li>Responsive layout for mobile and desktop</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="workflow-nav mt-4">
+      <a
+        class="btn btn-outline-success"
+        href="{{ url_for('workflow_prediction_page') }}"
+        >Previous Step</a
+      ><a class="btn btn-success" href="{{ url_for('project_workflow_page') }}"
+        >Back to Workflow Dashboard</a
+      >
+    </div>
+  </div>
+</section>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

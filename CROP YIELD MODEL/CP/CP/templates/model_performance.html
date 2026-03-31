@@ -1,0 +1,522 @@
+{% extends 'base.html' %} {% block content %}
+<section class="section-pad">
+  <div class="container">
+    <!-- Row 1: Primary metric stat cards -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-4">
+        <div class="stat-card h-100">
+          <p>Model Used</p>
+          <h3>{{ model_metrics.model_name }}</h3>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-4 col-6">
+        <div class="stat-card h-100">
+          <p>R² Score</p>
+          <h3>
+            <span
+              data-counter-target="{{ model_metrics.r2 if model_metrics.r2 is not none else 0 }}"
+              data-counter-decimals="4"
+              >0</span
+            >
+          </h3>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <div class="stat-card h-100">
+          <p>MAE</p>
+          <h3>
+            <span
+              data-counter-target="{{ model_metrics.mae if model_metrics.mae is not none else 0 }}"
+              data-counter-decimals="4"
+              >0</span
+            >
+          </h3>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-4">
+        <div class="stat-card h-100">
+          <p>RMSE</p>
+          <h3>
+            <span
+              data-counter-target="{{ model_metrics.rmse if model_metrics.rmse is not none else 0 }}"
+              data-counter-decimals="4"
+              >0</span
+            >
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: Improvement over baseline strip -->
+    {% if model_metrics.improvement_r2 is not none %}
+    <div class="row g-3 mb-4">
+      <div class="col-12">
+        <p class="section-label mb-2">Improvement vs Baseline Mean Predictor</p>
+      </div>
+      <div class="col-md-4">
+        <div class="improvement-card improvement-card--positive">
+          <div class="improvement-icon">
+            <i class="bi bi-graph-up-arrow"></i>
+          </div>
+          <div>
+            <p class="improvement-label">R² Improvement</p>
+            <h4 class="improvement-value">
+              +{{ model_metrics.improvement_r2 }}%
+            </h4>
+            <p class="improvement-sub">
+              Model: {{ model_metrics.r2 }} &nbsp;&middot;&nbsp; Baseline: {{
+              model_metrics.baseline_r2 }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="improvement-card improvement-card--positive">
+          <div class="improvement-icon">
+            <i class="bi bi-arrow-down-circle"></i>
+          </div>
+          <div>
+            <p class="improvement-label">MAE Reduction</p>
+            <h4 class="improvement-value">
+              −{{ model_metrics.improvement_mae }}%
+            </h4>
+            <p class="improvement-sub">
+              Model: {{ model_metrics.mae }} &nbsp;&middot;&nbsp; Baseline: {{
+              model_metrics.baseline_mae }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="improvement-card improvement-card--positive">
+          <div class="improvement-icon"><i class="bi bi-bullseye"></i></div>
+          <div>
+            <p class="improvement-label">RMSE Reduction</p>
+            <h4 class="improvement-value">
+              −{{ model_metrics.improvement_rmse }}%
+            </h4>
+            <p class="improvement-sub">
+              Model: {{ model_metrics.rmse }} &nbsp;&middot;&nbsp; Baseline: {{
+              model_metrics.baseline_rmse }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Row 3: Metric quality gauge strip -->
+    <div class="row g-3 mb-4">
+      <div class="col-12">
+        <p class="section-label mb-2">Metric Quality Indicators</p>
+      </div>
+      <div class="col-md-4">
+        <div class="metric-quality-card">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-semibold small">R² Score</span>
+            <span
+              class="mq-badge {% if model_metrics.r2 is not none and model_metrics.r2 >= 0.95 %}mq-excellent {% elif model_metrics.r2 is not none and model_metrics.r2 >= 0.85 %}mq-good {% elif model_metrics.r2 is not none and model_metrics.r2 >= 0.70 %}mq-fair {% else %}mq-poor{% endif %}"
+            >
+              {% if model_metrics.r2 is not none and model_metrics.r2 >= 0.95
+              %}Excellent {% elif model_metrics.r2 is not none and
+              model_metrics.r2 >= 0.85 %}Good {% elif model_metrics.r2 is not
+              none and model_metrics.r2 >= 0.70 %}Fair {% else %}Needs Work{%
+              endif %}
+            </span>
+          </div>
+          <div class="mq-bar-track">
+            <div
+              class="mq-bar-fill"
+              data-bar-width="{{ ((model_metrics.r2 if model_metrics.r2 is not none else 0) * 100) | round(1) }}"
+            ></div>
+          </div>
+          <p class="mq-note">
+            1.0 = perfect fit. Values above 0.95 indicate strong predictive
+            reliability.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="metric-quality-card">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-semibold small">MAE (Mean Absolute Error)</span>
+            <span
+              class="mq-badge {% if model_metrics.mae is not none and model_metrics.mae <= 0.1 %}mq-excellent {% elif model_metrics.mae is not none and model_metrics.mae <= 0.5 %}mq-good {% elif model_metrics.mae is not none and model_metrics.mae <= 1.0 %}mq-fair {% else %}mq-poor{% endif %}"
+            >
+              {% if model_metrics.mae is not none and model_metrics.mae <= 0.1
+              %}Excellent {% elif model_metrics.mae is not none and
+              model_metrics.mae <= 0.5 %}Good {% elif model_metrics.mae is not
+              none and model_metrics.mae <= 1.0 %}Fair {% else %}High{% endif %}
+            </span>
+          </div>
+          <div class="mq-bar-track">
+            <div
+              class="mq-bar-fill mq-bar-fill--inverse"
+              data-bar-width="{{ [100 - ((model_metrics.mae if model_metrics.mae is not none else 1) * 100), 5] | max | round }}"
+            ></div>
+          </div>
+          <p class="mq-note">
+            Average absolute prediction error in normalised yield units. Lower
+            is better.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="metric-quality-card">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-semibold small">RMSE (Root Mean Sq. Error)</span>
+            <span
+              class="mq-badge {% if model_metrics.rmse is not none and model_metrics.rmse <= 0.15 %}mq-excellent {% elif model_metrics.rmse is not none and model_metrics.rmse <= 0.5 %}mq-good {% elif model_metrics.rmse is not none and model_metrics.rmse <= 1.0 %}mq-fair {% else %}mq-poor{% endif %}"
+            >
+              {% if model_metrics.rmse is not none and model_metrics.rmse <=
+              0.15 %}Excellent {% elif model_metrics.rmse is not none and
+              model_metrics.rmse <= 0.5 %}Good {% elif model_metrics.rmse is not
+              none and model_metrics.rmse <= 1.0 %}Fair {% else %}High{% endif
+              %}
+            </span>
+          </div>
+          <div class="mq-bar-track">
+            <div
+              class="mq-bar-fill mq-bar-fill--inverse"
+              data-bar-width="{{ [100 - ((model_metrics.rmse if model_metrics.rmse is not none else 1) * 100), 5] | max | round }}"
+            ></div>
+          </div>
+          <p class="mq-note">
+            Penalises large prediction errors more heavily than MAE. Lower is
+            better.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 4: Chart + Interpretation -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-7">
+        <div class="card chart-card h-100">
+          <div class="card-body">
+            <div class="chart-toolbar">
+              <h2 id="modelCompareTitle" class="h4 fw-bold mb-2">
+                Model vs Baseline Comparison
+              </h2>
+              <div class="d-flex gap-2">
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-success chart-action-toggle"
+                  data-target-chart="modelCompareChart"
+                  data-chart-types="bar,line"
+                >
+                  View Toggle
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-outline-secondary chart-action-download"
+                  data-target-chart="modelCompareChart"
+                >
+                  Download
+                </button>
+              </div>
+            </div>
+            <p id="modelCompareNote" class="text-muted small mb-3">
+              Side-by-side comparison on the same 20% validation split.
+            </p>
+            <div class="chart-wrap chart-wrap--model">
+              <canvas id="modelCompareChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-5">
+        <div class="card panel-card h-100">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Interpretation Guide</h2>
+            <div class="interp-guide">
+              <div class="interp-item">
+                <span class="interp-icon"
+                  ><i class="bi bi-check2-circle"></i
+                ></span>
+                <div>
+                  <strong
+                    >R² = {{ model_metrics.r2 if model_metrics.r2 is not none
+                    else 'N/A' }}</strong
+                  >
+                  <p>
+                    The model explains {{ ((model_metrics.r2 if model_metrics.r2
+                    is not none else 0) * 100) | round(2) }}% of yield variance
+                    — {% if model_metrics.r2 is not none and model_metrics.r2 >=
+                    0.95 %}outstanding fit{% elif model_metrics.r2 is not none
+                    and model_metrics.r2 >= 0.85 %}strong fit{% else %}moderate
+                    fit{% endif %} for a real-world agricultural dataset. {% if
+                    model_metrics.model_rank is not none and
+                    model_metrics.models_compared %} Ranked #{{
+                    model_metrics.model_rank }} out of {{
+                    model_metrics.models_compared }} evaluated models. {% endif
+                    %}
+                  </p>
+                </div>
+              </div>
+              <div class="interp-item">
+                <span class="interp-icon"><i class="bi bi-rulers"></i></span>
+                <div>
+                  <strong
+                    >MAE = {{ model_metrics.mae if model_metrics.mae is not none
+                    else 'N/A' }}</strong
+                  >
+                  <p>
+                    On average the prediction is off by {{ model_metrics.mae if
+                    model_metrics.mae is not none else 'N/A' }} units {% if
+                    model_metrics.improvement_mae is not none %}— {{
+                    model_metrics.improvement_mae }}% tighter than a naive mean
+                    predictor.{% else %}— baseline-comparator reduction is not
+                    available in the current advanced score file.{% endif %} {%
+                    if model_metrics.mae_gap_from_best_pct is not none %} {% if
+                    model_metrics.mae_gap_from_best_pct <= 0 %}This is currently
+                    the best MAE among compared models.{% else %} This is {{
+                    model_metrics.mae_gap_from_best_pct }}% above the best MAE
+                    in the leaderboard. {% endif %} {% endif %}
+                  </p>
+                </div>
+              </div>
+              <div class="interp-item">
+                <span class="interp-icon"><i class="bi bi-lightning"></i></span>
+                <div>
+                  <strong
+                    >RMSE = {{ model_metrics.rmse if model_metrics.rmse is not
+                    none else 'N/A' }}</strong
+                  >
+                  <p>
+                    Large outlier predictions are well controlled. {% if
+                    model_metrics.improvement_rmse is not none %}RMSE is {{
+                    model_metrics.improvement_rmse }}% lower than the
+                    baseline.{% else %}Baseline RMSE comparison is not available
+                    in the current advanced score file.{% endif %} {% if
+                    model_metrics.rmse_gap_from_best_pct is not none %} {% if
+                    model_metrics.rmse_gap_from_best_pct <= 0 %}This is
+                    currently the best RMSE among compared models.{% else %}
+                    This is {{ model_metrics.rmse_gap_from_best_pct }}% above
+                    the best RMSE in the leaderboard. {% endif %} {% endif %}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p class="text-muted small mb-0 mt-3">
+              All metrics are computed directly from your existing model and
+              preprocessing artifacts.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 5: Model details + algorithm info -->
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card panel-card h-100">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Model Details</h2>
+            <table class="table table-sm model-detail-table">
+              <tbody>
+                <tr>
+                  <td>Algorithm</td>
+                  <td><strong>{{ model_metrics.model_name }}</strong></td>
+                </tr>
+                <tr>
+                  <td>Family</td>
+                  <td>{{ model_metrics.algorithm_family }}</td>
+                </tr>
+                <tr>
+                  <td>Validation Strategy</td>
+                  <td>{{ model_metrics.validation_strategy }}</td>
+                </tr>
+                <tr>
+                  <td>Training Records</td>
+                  <td>
+                    {{ "{:,}".format(model_metrics.training_records) if
+                    model_metrics.training_records is not none else 'N/A' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Test Records</td>
+                  <td>
+                    {{ "{:,}".format(model_metrics.test_records) if
+                    model_metrics.test_records is not none else 'N/A' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Feature Dimensions</td>
+                  <td>{{ model_metrics.feature_count }}</td>
+                </tr>
+                <tr>
+                  <td>Models Compared</td>
+                  <td>
+                    {{ model_metrics.models_compared if
+                    model_metrics.models_compared is not none else 'N/A' }}
+                  </td>
+                </tr>
+                <tr>
+                  <td>Leaderboard Rank</td>
+                  <td>
+                    {% if model_metrics.model_rank is not none and
+                    model_metrics.models_compared %} #{{
+                    model_metrics.model_rank }} / {{
+                    model_metrics.models_compared }} {% else %}N/A{% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <td>R² Gap vs #2</td>
+                  <td>
+                    {% if model_metrics.r2_gap_vs_second is not none %} {{
+                    model_metrics.r2_gap_vs_second }} percentage points {% else
+                    %}N/A{% endif %}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card panel-card h-100">
+          <div class="card-body">
+            <h2 class="h4 fw-bold mb-3">Algorithm Notes</h2>
+            <ul class="list-clean">
+              <li>
+                <strong>CatBoost</strong> is a gradient boosted decision tree
+                library optimised for categorical features without one-hot
+                encoding overhead.
+              </li>
+              <li>
+                It uses <strong>ordered boosting</strong> to prevent prediction
+                shift and target leakage during training.
+              </li>
+              <li>
+                The model handles <strong>missing values</strong> natively
+                without imputation, making it robust on sparse agronomic
+                datasets.
+              </li>
+              <li>
+                Feature importance is computed using
+                <strong>SHAP-based scores</strong> internally, giving reliable
+                attribution per predictor.
+              </li>
+              <li>
+                Regularisation parameters (L2 leaf reg, depth, iterations) were
+                tuned via <strong>cross-validation</strong> to avoid overfitting
+                on the India crop dataset.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 6: All Models Trained -->
+    {% if model_metrics.all_models %}
+    <div class="row g-0 mt-4 mb-2">
+      <div class="col-12">
+        <p class="section-label mb-1">
+          All Models Trained — Ranked by R² Score
+        </p>
+        <p class="text-muted small">
+          Every algorithm evaluated on the same validation split. Highlighted =
+          selected best model.
+        </p>
+      </div>
+    </div>
+    <div class="row g-3 mb-4">
+      {% for m in model_metrics.all_models %}
+      <div class="col-lg-4 col-md-6">
+        <div class="model-card {% if m.is_best %}model-card--best{% endif %}">
+          <div class="model-card-header">
+            <div>
+              <span class="model-card-rank">#{{ loop.index }}</span>
+              <h4 class="model-card-name">{{ m.name }}</h4>
+              <p class="model-card-family">{{ m.family }}</p>
+            </div>
+            {% if m.is_best %}
+            <span class="model-tag model-tag--best"
+              ><i class="bi bi-star-fill"></i> Best</span
+            >
+            {% elif not m.has_data %}
+            <span class="model-tag model-tag--missing">No Data</span>
+            {% elif loop.index <= 3 %}
+            <span class="model-tag model-tag--top">Top Tier</span>
+            {% elif loop.index <= 5 %}
+            <span class="model-tag model-tag--strong">Strong</span>
+            {% else %}
+            <span class="model-tag model-tag--competitive">Competitive</span>
+            {% endif %}
+          </div>
+
+          <div class="model-metric-row">
+            <div class="model-metric-cell">
+              <span class="model-metric-label">R²</span>
+              <span class="model-metric-val"
+                >{{ m.r2 if m.r2 is not none else 'N/A' }}</span
+              >
+            </div>
+            <div class="model-metric-cell">
+              <span class="model-metric-label">MAE</span>
+              <span class="model-metric-val"
+                >{{ m.mae if m.mae is not none else 'N/A' }}</span
+              >
+            </div>
+            <div class="model-metric-cell">
+              <span class="model-metric-label">RMSE</span>
+              <span class="model-metric-val"
+                >{{ m.rmse if m.rmse is not none else 'N/A' }}</span
+              >
+            </div>
+            {% if m.mean_crop_mae is not none %}
+            <div class="model-metric-cell">
+              <span class="model-metric-label">Crop MAE</span>
+              <span class="model-metric-val">{{ m.mean_crop_mae }}</span>
+            </div>
+            {% endif %} {% if m.mean_state_mae is not none %}
+            <div class="model-metric-cell">
+              <span class="model-metric-label">State MAE</span>
+              <span class="model-metric-val">{{ m.mean_state_mae }}</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="model-r2-bar-wrap">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="model-metric-label">R² Accuracy</span>
+              <span class="model-metric-label fw-bold"
+                >{{ m.r2_pct if m.has_data else 'N/A' }}{% if m.has_data %}%{%
+                endif %}</span
+              >
+            </div>
+            <div class="mq-bar-track">
+              <div
+                class="mq-bar-fill {% if m.is_best %}mq-bar-fill--best{% endif %}"
+                data-bar-width="{{ m.r2_pct }}"
+              ></div>
+            </div>
+          </div>
+
+          {% if not m.has_data %}
+          <p class="model-missing-note mb-0">
+            Metrics file does not include this model in the current run
+            artifacts.
+          </p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<script id="modelDataPayload" type="application/json">
+  {{ model_metrics | tojson }}
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-bar-width]").forEach(function (el) {
+      el.style.width = el.getAttribute("data-bar-width") + "%";
+    });
+  });
+</script>
+{% endblock %}

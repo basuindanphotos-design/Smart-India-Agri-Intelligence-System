@@ -1,0 +1,31 @@
+{% extends 'base.html' %} {% block title %}Basic Info | CropAI{% endblock %} {%
+block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>Basic Info</h2>
+    <p>Dynamic preview, shape, statistics and schema.</p>
+    <div class="d-flex align-items-center gap-2">
+      <button id="refreshBasicInfo" class="btn btn-sm btn-outline-success">
+        Refresh Live Data
+      </button>
+      <small id="basicInfoUpdatedAt" class="text-muted"></small>
+    </div>
+  </div>
+  <div class="glass-card p-3 mb-4">
+    <h5>Head of Dataset</h5>
+    <div id="basicHead" class="table-responsive">{{ head_html|safe }}</div>
+  </div>
+  <div class="glass-card p-3 mb-4">
+    <h5>Shape</h5>
+    <p id="basicShape" class="mb-0">({{ shape[0] }}, {{ shape[1] }})</p>
+  </div>
+  <div class="glass-card p-3 mb-4">
+    <h5>Describe</h5>
+    <div id="basicDescribe" class="table-responsive">{{ desc_html|safe }}</div>
+  </div>
+  <div class="glass-card p-3">
+    <h5>Info</h5>
+    <div id="basicInfoTable" class="table-responsive">{{ info_html|safe }}</div>
+  </div>
+</section>
+{% endblock %}

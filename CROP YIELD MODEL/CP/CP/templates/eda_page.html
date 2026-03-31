@@ -1,0 +1,84 @@
+{% extends 'base.html' %} {% block extra_head %}<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>{% endblock %} {% block content %}
+<section class="section-pad">
+  <div class="container workflow-detail-page">
+    <div class="workflow-page-head reveal-up">
+      <p class="workflow-kicker mb-2">Step 3</p>
+      <h1>Exploratory Data Analysis</h1>
+      <p>
+        Visual exploration of crop-yield behavior across weather and regions.
+      </p>
+    </div>
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card chart-card reveal-up">
+          <div class="card-body">
+            <h2 class="h5 fw-bold mb-3">Yield Distribution by Crop</h2>
+            <div class="chart-wrap">
+              <canvas id="workflowCropDistributionChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card chart-card reveal-up">
+          <div class="card-body">
+            <h2 class="h5 fw-bold mb-3">Rainfall vs Yield</h2>
+            <div class="chart-wrap">
+              <canvas id="workflowRainfallYieldChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card chart-card reveal-up">
+          <div class="card-body">
+            <h2 class="h5 fw-bold mb-3">Temperature vs Yield</h2>
+            <div class="chart-wrap">
+              <canvas id="workflowTempYieldChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card chart-card reveal-up">
+          <div class="card-body">
+            <h2 class="h5 fw-bold mb-3">Area vs Production (Mean Yield)</h2>
+            <div class="chart-wrap">
+              <canvas id="workflowAreaProductionChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card panel-card mt-4 reveal-up">
+      <div class="card-body">
+        <h2 class="h4 fw-bold mb-2">Pattern Summary</h2>
+        <p class="mb-0 text-muted">
+          EDA confirms strong non-linear relationships between yield and
+          agro-climatic features such as rainfall, temperature, and regional
+          context.
+        </p>
+      </div>
+    </div>
+    <div class="workflow-nav mt-4">
+      <a
+        class="btn btn-outline-success"
+        href="{{ url_for('workflow_preprocessing_page') }}"
+        >Previous Step</a
+      ><a
+        class="btn btn-success"
+        href="{{ url_for('workflow_feature_engineering_page') }}"
+        >Next Step</a
+      >
+    </div>
+  </div>
+</section>
+<script id="workflowChartData" type="application/json">
+  {{ chart_data | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+{% endblock %}

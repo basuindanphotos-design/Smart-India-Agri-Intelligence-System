@@ -1,0 +1,126 @@
+{% extends "base.html" %} {% block title %}Dataset Collection | Project
+Workflow{% endblock %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="container workflow-shell">
+  <div class="workflow-meta">
+    <span>Step {{ workflow.step_number }} of {{ workflow.step_total }}</span>
+    <h1>Dataset Collection</h1>
+    <p>
+      Dataset source, schema, target variable, and initial sample quality
+      checks.
+    </p>
+  </div>
+
+  <div class="result-kpi-grid" style="margin-bottom: 16px">
+    <article class="kpi-card">
+      <h3>Samples</h3>
+      <p>{{ sample_count }}</p>
+    </article>
+    <article class="kpi-card">
+      <h3>Features</h3>
+      <p>{{ feature_count }}</p>
+    </article>
+    <article class="kpi-card">
+      <h3>Target Variable</h3>
+      <p>{{ target_variable }}</p>
+    </article>
+    <article class="kpi-card">
+      <h3>Dataset File</h3>
+      <p>{{ dataset_file }}</p>
+    </article>
+  </div>
+
+  <article class="about" style="margin-bottom: 16px">
+    <h3>Expected Agronomic Features Check</h3>
+    <p>
+      <strong>Available:</strong> {{ available_expected|join(', ') if
+      available_expected else 'None from NPK/soil standard set in this dataset.'
+      }}
+    </p>
+    <p>
+      <strong>Missing:</strong> {{ missing_expected|join(', ') if
+      missing_expected else 'None' }}
+    </p>
+  </article>
+
+  <div class="chart-grid" style="margin-bottom: 16px">
+    <article class="chart-card">
+      <h3>Crop Distribution</h3>
+      <canvas id="datasetCropDist"></canvas>
+    </article>
+    <article class="chart-card">
+      <h3>Top Records Snapshot</h3>
+      <div class="workflow-note">
+        Preview table below is generated from live dataset rows.
+      </div>
+    </article>
+  </div>
+
+  <article class="about">
+    <h3>Dataset Preview</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            {% for c in columns %}
+            <th>{{ c }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in preview_rows %}
+          <tr>
+            {% for c in columns %}
+            <td>{{ row[c] }}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <div class="workflow-nav-row">
+    {% if workflow.prev_step %}<a
+      class="ghost-btn"
+      href="{{ url_for(workflow.prev_step.endpoint) }}"
+      >Previous</a
+    >{% else %}<span></span>{% endif %} {% if workflow.next_step %}<a
+      class="cta-btn"
+      href="{{ url_for(workflow.next_step.endpoint) }}"
+      >Next Step</a
+    >{% endif %}
+  </div>
+</section>
+
+<script id="datasetCropDistData" type="application/json">
+  {{ crop_distribution | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+<script>
+  const dist = JSON.parse(
+    document.getElementById("datasetCropDistData").textContent || "[]",
+  );
+  if (dist.length) {
+    new Chart(document.getElementById("datasetCropDist"), {
+      type: "bar",
+      data: {
+        labels: dist.map((x) => x.crop),
+        datasets: [
+          {
+            label: "Records",
+            data: dist.map((x) => x.count),
+            backgroundColor: "#2a9d56",
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: "y" },
+    });
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,292 @@
+{% extends "base.html" %} {% block title %}Crop Predictor{% endblock %} {% block
+content %}
+<div class="container" style="padding: 24px 0 36px">
+  <div class="section-head" style="margin-bottom: 1.2rem">
+    <h1>Crop Recommendation Predictor</h1>
+    <p>
+      Enter farm inputs and profile factors. Every factor contributes to better
+      recommendation quality.
+    </p>
+    <p class="weather-updated">
+      You can submit one factor, any combination, or all factors. Missing inputs
+      are auto-filled with model-safe defaults.
+    </p>
+  </div>
+
+  {% if error %}
+  <article class="error-panel" style="margin-bottom: 1rem">
+    <h3>Error</h3>
+    <p>{{ error }}</p>
+  </article>
+  {% endif %}
+
+  <article class="weather-panel" style="margin-bottom: 1rem">
+    <h3><i class="fa-solid fa-cloud-sun"></i> Live Weather Integration</h3>
+    <p class="weather-updated" style="margin-bottom: 0.6rem">
+      Fetch live weather for your city and auto-fill farm conditions instantly.
+    </p>
+    <div class="predictor-weather-row" style="margin-top: 0.6rem">
+      <input id="cityInput" type="text" />
+      <button id="weatherBtn" type="button">
+        <i class="fa-solid fa-cloud-sun"></i> Weather
+      </button>
+    </div>
+
+    <div id="weatherPanel" class="hidden" style="margin-top: 1rem">
+      <div class="weather-grid">
+        <article class="weather-card">
+          <h3>Temperature</h3>
+          <p id="tempText">-- °C</p>
+        </article>
+        <article class="weather-card">
+          <h3>Humidity</h3>
+          <p id="humidityText">-- %</p>
+        </article>
+        <article class="weather-card">
+          <h3>Rainfall</h3>
+          <p id="rainText">-- mm</p>
+        </article>
+        <article class="weather-card">
+          <h3>Location</h3>
+          <p id="locationText">--</p>
+        </article>
+      </div>
+      <p id="updatedText" class="weather-updated"></p>
+      <button id="useWeatherBtn" type="button" class="ghost-btn">
+        Use Weather Data for Prediction
+      </button>
+    </div>
+  </article>
+
+  <form
+    id="predictionForm"
+    method="post"
+    action="{{ url_for('crop_predictor') }}"
+    class="predict-form"
+  >
+    <input type="hidden" name="rainfall" id="rainfallInput" value="0" />
+
+    <label>
+      <span>Temperature (deg C)</span>
+      <input type="number" step="any" name="temperature" />
+    </label>
+
+    <label>
+      <span>Humidity (%)</span>
+      <input type="number" step="any" name="humidity" />
+    </label>
+
+    <label>
+      <span>Land Area (Hectare)</span>
+      <input type="number" step="any" name="area" />
+    </label>
+
+    <div class="form-grid">
+      <label>
+        <span>Season</span>
+        <select name="season">
+          <option value="" selected disabled hidden></option>
+          <option value="Kharif">Kharif (Monsoon Crops - Jun to Oct)</option>
+          <option value="Rabi">Rabi (Winter Crops - Oct to Mar)</option>
+          <option value="Zaid">Zaid (Summer Crops - Mar to Jun)</option>
+          <option value="Whole Year">Whole Year (All-Season Crops)</option>
+        </select>
+      </label>
+
+      <label>
+        <span>Crop Type</span>
+        <select name="crop_type">
+          <option value="" selected disabled hidden></option>
+          <option value="Annual">
+            Annual (Completes cycle in 1 year - Wheat, Rice)
+          </option>
+          <option value="Perennial">
+            Perennial (Lives 2+ years - Sugarcane, Banana)
+          </option>
+          <option value="Biennial">
+            Biennial (Completes cycle in 2 years - Carrot, Onion)
+          </option>
+        </select>
+      </label>
+
+      <label>
+        <span>Water Source</span>
+        <select name="water_source">
+          <option value="" selected disabled hidden></option>
+          <option value="Rainfed">
+            Rainfed (Depends on rainfall - Bajra, Jowar)
+          </option>
+          <option value="Irrigated">
+            Irrigated (Artificial water supply - Rice, Sugarcane)
+          </option>
+        </select>
+      </label>
+
+      <label>
+        <span>Climate Type</span>
+        <select name="climate_type">
+          <option value="" selected disabled hidden></option>
+          <option value="Tropical">
+            Tropical (Hot & humid year-round - Coconut, Banana)
+          </option>
+          <option value="Subtropical">
+            Subtropical (Warm summers, mild winters - Wheat, Mustard)
+          </option>
+          <option value="Temperate">
+            Temperate (Cool climate, distinct seasons - Apple, Pear)
+          </option>
+        </select>
+      </label>
+
+      <label>
+        <span>Duration Type</span>
+        <select name="duration_type">
+          <option value="" selected disabled hidden></option>
+          <option value="Short-Duration">
+            Short-Duration (60–90 days - Radish, Spinach)
+          </option>
+          <option value="Medium-Duration">
+            Medium-Duration (90–120 days - Maize, Groundnut)
+          </option>
+          <option value="Long-Duration">
+            Long-Duration (120+ days - Sugarcane, Cotton)
+          </option>
+        </select>
+      </label>
+
+      <label>
+        <span>Farming System</span>
+        <select name="farming_system">
+          <option value="" selected disabled hidden></option>
+          <option value="Field">
+            Field (Open farmland - Wheat, Rice, Maize)
+          </option>
+          <option value="Plantation">
+            Plantation (Large-scale estates - Tea, Coffee, Rubber)
+          </option>
+          <option value="Horticulture">
+            Horticulture (Fruits & vegetables - Apple, Tomato)
+          </option>
+        </select>
+      </label>
+
+      <label>
+        <span>Economic Use</span>
+        <select name="economic_use">
+          <option value="" selected disabled hidden></option>
+          <option value="Food">
+            Food (Human consumption - Rice, Wheat, Vegetables)
+          </option>
+          <option value="Cash">
+            Cash (Sold for income - Cotton, Sugarcane, Tobacco)
+          </option>
+          <option value="Fodder">
+            Fodder (Livestock feed - Sorghum, Bajra, Lucerne)
+          </option>
+        </select>
+      </label>
+
+      <label>
+        <span>Location</span>
+        <input type="text" name="location" id="locationInput" />
+      </label>
+    </div>
+
+    <article class="guide-panel">
+      <h3>Smart Crop Guide</h3>
+      <p>
+        Use this guide to choose profile options and understand why a crop is
+        recommended.
+      </p>
+      <ul>
+        <li>Perennial: Sugarcane, Banana, Coconut, Coffee, Tea</li>
+        <li>Annual: Wheat, Rice, Maize, Mustard, Groundnut</li>
+        <li>Rainfed examples: Bajra, Jowar, Millets</li>
+        <li>Tropical: Coconut, Banana, Coffee</li>
+        <li>Subtropical: Wheat, Mustard</li>
+        <li>Temperate: Apple, Pear, Plum</li>
+      </ul>
+    </article>
+
+    <button type="submit" class="submit-btn">Predict Crop</button>
+  </form>
+
+  {% if history %}
+  <section class="history-board reveal" style="margin-top: 1.2rem">
+    <div class="history-head">
+      <div>
+        <h2>Result Prediction Data</h2>
+        <p>
+          Every prediction run (inputs + outputs) is saved locally in your
+          browser. You can import prior records and continue analysis.
+        </p>
+      </div>
+      <div class="history-actions">
+        <form
+          method="post"
+          action="{{ url_for('prediction_history_import') }}"
+          enctype="multipart/form-data"
+        >
+          <input
+            id="historyImportInput"
+            name="history_file"
+            type="file"
+            accept=".csv"
+            hidden
+            onchange="this.form.submit()"
+          />
+          <label for="historyImportInput" class="history-btn history-btn-import"
+            ><i class="fa-solid fa-upload"></i> Import CSV</label
+          >
+        </form>
+        <a
+          class="history-btn history-btn-export"
+          href="{{ url_for('prediction_history_export') }}"
+          ><i class="fa-solid fa-download"></i> Export CSV</a
+        >
+        <form method="post" action="{{ url_for('prediction_history_clear') }}">
+          <button type="submit" class="history-btn history-btn-clear">
+            <i class="fa-regular fa-trash-can"></i> Clear
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="history-table-wrap">
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Location</th>
+            <th>Crop</th>
+            <th>Season</th>
+            <th>Temp</th>
+            <th>Rainfall</th>
+            <th>Farm Area</th>
+            <th>Yield (t/ha)</th>
+            <th>Total Production</th>
+            <th>Price (INR/t)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in history %}
+          <tr>
+            <td>{{ item.time }}</td>
+            <td>{{ item.location }}</td>
+            <td>{{ item.crop }}</td>
+            <td>{{ item.season or '-' }}</td>
+            <td>{{ item.temperature or '-' }}</td>
+            <td>{{ item.rainfall or '-' }}</td>
+            <td>{{ item.farm_area or '-' }}</td>
+            <td>{{ item.yield }}</td>
+            <td>{{ item.production }}</td>
+            <td>{{ item.price_per_ton }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

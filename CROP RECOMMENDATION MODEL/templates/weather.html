@@ -1,0 +1,263 @@
+{% extends "base.html" %} {% block title %}Weather | AI Crop Prediction{%
+endblock %} {% block content %}
+<div class="container" style="padding: 32px 0 40px">
+  <div class="section-head" style="text-align: center; margin-bottom: 3rem">
+    <h1>🌦️ Live Weather Information</h1>
+    <p>
+      Get real-time weather data for your location and use it directly for crop
+      prediction.
+    </p>
+  </div>
+
+  <article class="weather-panel" style="margin-bottom: 2rem">
+    <h3><i class="fa-solid fa-cloud-sun"></i> Fetch Weather Data</h3>
+    <p style="color: var(--muted); margin-bottom: 1.5rem">
+      Enter a city name or allow location access to get live weather data.
+      Current conditions include temperature, humidity, and rainfall.
+    </p>
+    <div
+      style="
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
+        align-items: end;
+      "
+    >
+      <div>
+        <label style="display: block; margin-bottom: 0.5rem; font-weight: 650"
+          >City Name</label
+        >
+        <input id="cityInput" type="text" style="width: 100%" />
+      </div>
+      <button id="weatherBtn" type="button">
+        <i class="fa-solid fa-cloud-sun"></i> Get Weather
+      </button>
+    </div>
+  </article>
+
+  <div id="weatherPanel" class="hidden">
+    <h3 style="margin: 2rem 0 1rem; text-align: center">📍 Weather Data</h3>
+    <div class="weather-grid">
+      <article class="weather-card">
+        <h3><i class="fa-solid fa-temperature-high"></i> Temperature</h3>
+        <p
+          style="
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0.5rem 0;
+          "
+        >
+          <span id="tempText">--</span>
+        </p>
+        <p id="updatedText" class="weather-updated"></p>
+      </article>
+      <article class="weather-card">
+        <h3><i class="fa-solid fa-droplet"></i> Humidity</h3>
+        <p
+          style="
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0.5rem 0;
+          "
+        >
+          <span id="humidityText">--</span>
+        </p>
+      </article>
+      <article class="weather-card">
+        <h3><i class="fa-solid fa-cloud-rain"></i> Rainfall</h3>
+        <p
+          style="
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0.5rem 0;
+          "
+        >
+          <span id="rainText">--</span>
+        </p>
+      </article>
+      <article class="weather-card">
+        <h3><i class="fa-solid fa-map-pin"></i> Location</h3>
+        <p id="locationText" style="margin: 0.5rem 0">--</p>
+      </article>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem">
+      <a href="{{ url_for('crop_predictor') }}" class="cta-btn">
+        <i class="fa-solid fa-seedling"></i> Use Weather for Prediction
+      </a>
+    </div>
+  </div>
+
+  <section class="reveal">
+    <div class="section-head" style="text-align: center">
+      <h2>About Weather Data</h2>
+      <p>How weather affects your crop selection and recommendations.</p>
+    </div>
+    <div class="market-grid">
+      <article class="info-card">
+        <h3><i class="fa-solid fa-thermometer"></i> Temperature Impact</h3>
+        <p>
+          Temperature directly affects crop growth rate and productivity.
+          Different crops have optimal temperature ranges. Too high or too low
+          temperatures can stress plants and reduce yield significantly.
+        </p>
+      </article>
+      <article class="info-card">
+        <h3><i class="fa-solid fa-water"></i> Humidity Levels</h3>
+        <p>
+          Humidity affects plant transpiration and disease pressure. High
+          humidity increases fungal disease risk, while low humidity increases
+          water requirement and stress on crops. Balance is critical for health.
+        </p>
+      </article>
+      <article class="info-card">
+        <h3><i class="fa-solid fa-cloud-rain"></i> Rainfall Patterns</h3>
+        <p>
+          Rainfall is crucial for rainfed agriculture. Timing and quantity
+          determine irrigation needs. Excessive rainfall can cause waterlogging,
+          while insufficient rainfall requires supplementary irrigation.
+        </p>
+      </article>
+      <article class="info-card">
+        <h3><i class="fa-solid fa-wind"></i> Weather Variability</h3>
+        <p>
+          Unexpected weather changes can impact crop performance. Our system
+          accounts for seasonal patterns and helps you prepare for optimal
+          conditions and manage risks effectively.
+        </p>
+      </article>
+      <article class="info-card">
+        <h3><i class="fa-solid fa-leaf"></i> Crop Selection</h3>
+        <p>
+          Matching crop type with local weather conditions is essential for
+          success. Our AI learns from weather patterns to recommend crops that
+          will thrive in your specific environment.
+        </p>
+      </article>
+      <article class="info-card">
+        <h3><i class="fa-solid fa-chart-line"></i> Decision Making</h3>
+        <p>
+          Real-time weather data enables data-driven farming decisions. Plan
+          irrigation, apply fertilizers, and schedule operations based on actual
+          weather conditions for better results.
+        </p>
+      </article>
+    </div>
+  </section>
+</div>
+
+<script>
+  const weatherData = {
+    temp: null,
+    humidity: null,
+    rain: 0,
+    location: "",
+    updatedAt: "",
+  };
+
+  function formatUpdatedTime(isoText) {
+    if (!isoText) return "";
+    const date = new Date(isoText);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleString();
+  }
+
+  function renderWeatherPanel() {
+    const panel = document.getElementById("weatherPanel");
+    if (panel) panel.classList.remove("hidden");
+
+    const tempText = document.getElementById("tempText");
+    const humidityText = document.getElementById("humidityText");
+    const rainText = document.getElementById("rainText");
+    const locationText = document.getElementById("locationText");
+    const updatedText = document.getElementById("updatedText");
+
+    if (tempText) tempText.textContent = `${weatherData.temp.toFixed(2)} °C`;
+    if (humidityText)
+      humidityText.textContent = `${weatherData.humidity.toFixed(2)} %`;
+    if (rainText) rainText.textContent = `${weatherData.rain.toFixed(2)} mm`;
+    if (locationText) locationText.textContent = weatherData.location;
+    if (updatedText)
+      updatedText.textContent = weatherData.updatedAt
+        ? `Updated: ${weatherData.updatedAt}`
+        : "";
+  }
+
+  async function fetchWeather() {
+    const cityInput = document.getElementById("cityInput");
+    if (!cityInput) return;
+
+    const city = cityInput.value.trim();
+    try {
+      let latitude, longitude, locationLabel;
+
+      if (city) {
+        const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json&t=${Date.now()}`;
+        const geoRes = await fetch(geoUrl, { cache: "no-store" });
+        const geoData = await geoRes.json();
+        if (!geoData.results || !geoData.results.length) {
+          alert("City not found. Try another search.");
+          return;
+        }
+        const place = geoData.results[0];
+        latitude = place.latitude;
+        longitude = place.longitude;
+        locationLabel = [place.name, place.admin1, place.country]
+          .filter(Boolean)
+          .join(", ");
+      } else {
+        const pos = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+          });
+        });
+        latitude = pos.coords.latitude;
+        longitude = pos.coords.longitude;
+        const reverseUrl = `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${latitude}&longitude=${longitude}&language=en&format=json&t=${Date.now()}`;
+        const reverseRes = await fetch(reverseUrl, { cache: "no-store" });
+        const reverseData = await reverseRes.json();
+        locationLabel =
+          reverseData.results && reverseData.results.length
+            ? [
+                reverseData.results[0].name,
+                reverseData.results[0].admin1,
+                reverseData.results[0].country,
+              ]
+                .filter(Boolean)
+                .join(", ")
+            : "Current Location";
+      }
+
+      const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,precipitation&timezone=auto&t=${Date.now()}`;
+      const weatherRes = await fetch(weatherUrl, { cache: "no-store" });
+      const weatherDataRes = await weatherRes.json();
+
+      if (weatherDataRes.current) {
+        weatherData.temp = Number(weatherDataRes.current.temperature_2m ?? 0);
+        weatherData.humidity = Number(
+          weatherDataRes.current.relative_humidity_2m ?? 0,
+        );
+        weatherData.rain = Number(weatherDataRes.current.precipitation ?? 0);
+        weatherData.location = locationLabel;
+        weatherData.updatedAt = formatUpdatedTime(weatherDataRes.current.time);
+        renderWeatherPanel();
+      }
+    } catch (error) {
+      alert(
+        "Unable to fetch weather. Check city name or allow location access and try again.",
+      );
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const weatherBtn = document.getElementById("weatherBtn");
+    if (weatherBtn) {
+      weatherBtn.addEventListener("click", fetchWeather);
+    }
+  });
+</script>
+{% endblock %}

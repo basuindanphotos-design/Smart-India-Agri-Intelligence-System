@@ -1,0 +1,208 @@
+{% extends "base.html" %} {% block title %}Exploratory Data Analysis | Project
+Workflow{% endblock %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="container workflow-shell">
+  <div class="workflow-meta">
+    <span>Step {{ workflow.step_number }} of {{ workflow.step_total }}</span>
+    <h1>Exploratory Data Analysis</h1>
+    <p>
+      Pattern discovery and relationship analysis from active crop
+      recommendation dataset.
+    </p>
+  </div>
+
+  <div class="chart-grid" style="margin-bottom: 16px">
+    <article class="chart-card">
+      <h3>Crop Distribution</h3>
+      <canvas id="cropDistChart"></canvas>
+    </article>
+    <article class="chart-card">
+      <h3>Season vs Average Yield</h3>
+      <canvas id="seasonYieldChart"></canvas>
+    </article>
+  </div>
+
+  <div class="chart-grid" style="margin-bottom: 16px">
+    <article class="chart-card">
+      <h3>Temperature vs Crop (proxy from fertilizer in current dataset)</h3>
+      <canvas id="tempCropChart"></canvas>
+    </article>
+    <article class="chart-card">
+      <h3>Rainfall vs Crop (proxy from pesticide in current dataset)</h3>
+      <canvas id="rainCropChart"></canvas>
+    </article>
+  </div>
+
+  <article class="chart-card" style="margin-bottom: 16px">
+    <h3>NPK-like Distribution (available agronomic proxy features)</h3>
+    <canvas id="npkLikeChart"></canvas>
+  </article>
+
+  <article class="about">
+    <h3>EDA Insights</h3>
+    <ul>
+      <li>
+        Crop distribution identifies dominant classes used for classifier
+        learning stability.
+      </li>
+      <li>
+        Season-wise yield means help understand timing-related productivity
+        variation.
+      </li>
+      <li>
+        Input proxies (fertilizer/pesticide) reveal intensity differences across
+        crop classes.
+      </li>
+      <li>
+        Feature spread supports robust model behavior for both recommendation
+        and yield estimation tasks.
+      </li>
+    </ul>
+  </article>
+
+  <div class="workflow-nav-row">
+    {% if workflow.prev_step %}<a
+      class="ghost-btn"
+      href="{{ url_for(workflow.prev_step.endpoint) }}"
+      >Previous</a
+    >{% endif %} {% if workflow.next_step %}<a
+      class="cta-btn"
+      href="{{ url_for(workflow.next_step.endpoint) }}"
+      >Next Step</a
+    >{% endif %}
+  </div>
+</section>
+
+<script id="cropDistData" type="application/json">
+  {{ crop_dist | tojson }}
+</script>
+<script id="seasonYieldData" type="application/json">
+  {{ season_yield | tojson }}
+</script>
+<script id="tempCropData" type="application/json">
+  {{ temp_vs_crop | tojson }}
+</script>
+<script id="rainCropData" type="application/json">
+  {{ rain_vs_crop | tojson }}
+</script>
+<script id="npkLikeData" type="application/json">
+  {{ npk_like | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+<script>
+  const cropDist = JSON.parse(
+    document.getElementById("cropDistData").textContent || "[]",
+  );
+  const seasonYield = JSON.parse(
+    document.getElementById("seasonYieldData").textContent || "[]",
+  );
+  const tempCrop = JSON.parse(
+    document.getElementById("tempCropData").textContent || "[]",
+  ).slice(0, 120);
+  const rainCrop = JSON.parse(
+    document.getElementById("rainCropData").textContent || "[]",
+  ).slice(0, 120);
+  const npkLike = JSON.parse(
+    document.getElementById("npkLikeData").textContent || "[]",
+  ).slice(0, 120);
+
+  if (cropDist.length) {
+    new Chart(document.getElementById("cropDistChart"), {
+      type: "bar",
+      data: {
+        labels: cropDist.map((x) => x.crop),
+        datasets: [
+          {
+            label: "Count",
+            data: cropDist.map((x) => x.count),
+            backgroundColor: "#2a9d56",
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: "y" },
+    });
+  }
+
+  if (seasonYield.length) {
+    new Chart(document.getElementById("seasonYieldChart"), {
+      type: "line",
+      data: {
+        labels: seasonYield.map((x) => x.season),
+        datasets: [
+          {
+            label: "Average Yield",
+            data: seasonYield.map((x) => x.yield),
+            borderColor: "#f59e0b",
+            backgroundColor: "rgba(245, 158, 11, 0.2)",
+            fill: true,
+            tension: 0.3,
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false },
+    });
+  }
+
+  if (tempCrop.length) {
+    new Chart(document.getElementById("tempCropChart"), {
+      type: "scatter",
+      data: {
+        datasets: [
+          {
+            label: "Temp Proxy vs Crop Index",
+            data: tempCrop.map((r, i) => ({ x: i + 1, y: r.value })),
+            backgroundColor: "#2563eb",
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false },
+    });
+  }
+
+  if (rainCrop.length) {
+    new Chart(document.getElementById("rainCropChart"), {
+      type: "scatter",
+      data: {
+        datasets: [
+          {
+            label: "Rain Proxy vs Crop Index",
+            data: rainCrop.map((r, i) => ({ x: i + 1, y: r.value })),
+            backgroundColor: "#ef4444",
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false },
+    });
+  }
+
+  if (npkLike.length) {
+    const areaAvg =
+      npkLike.reduce((a, b) => a + Number(b.area || 0), 0) / npkLike.length;
+    const fertAvg =
+      npkLike.reduce((a, b) => a + Number(b.fertilizer || 0), 0) /
+      npkLike.length;
+    const pestAvg =
+      npkLike.reduce((a, b) => a + Number(b.pesticide || 0), 0) /
+      npkLike.length;
+    new Chart(document.getElementById("npkLikeChart"), {
+      type: "bar",
+      data: {
+        labels: ["Area", "Fertilizer", "Pesticide"],
+        datasets: [
+          {
+            label: "Average Value",
+            data: [areaAvg, fertAvg, pestAvg],
+            backgroundColor: ["#22c55e", "#f59e0b", "#3b82f6"],
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false },
+    });
+  }
+</script>
+{% endblock %}

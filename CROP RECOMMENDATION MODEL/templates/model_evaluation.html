@@ -1,0 +1,96 @@
+{% extends "base.html" %} {% block title %}Model Evaluation | Project Workflow{%
+endblock %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="container workflow-shell">
+  <div class="workflow-meta">
+    <span>Step {{ workflow.step_number }} of {{ workflow.step_total }}</span>
+    <h1>Model Evaluation</h1>
+    <p>Classification quality metrics and confusion matrix validation.</p>
+  </div>
+
+  <div class="result-kpi-grid" style="margin-bottom: 16px">
+    <article class="kpi-card">
+      <h3>Accuracy</h3>
+      <p>{{ metrics.accuracy }}</p>
+    </article>
+    <article class="kpi-card">
+      <h3>Precision</h3>
+      <p>{{ metrics.precision }}</p>
+    </article>
+    <article class="kpi-card">
+      <h3>Recall</h3>
+      <p>{{ metrics.recall }}</p>
+    </article>
+    <article class="kpi-card">
+      <h3>F1 Score</h3>
+      <p>{{ metrics.f1 }}</p>
+    </article>
+  </div>
+
+  <article class="about" style="margin-bottom: 16px">
+    <h3>Best Performing Model</h3>
+    <p>
+      <strong>{{ best_model }}</strong> currently leads based on testing metrics
+      from workflow benchmarking.
+    </p>
+  </article>
+
+  <article class="chart-card">
+    <h3>Confusion Matrix (Top Crop Classes)</h3>
+    <canvas id="cmChart"></canvas>
+  </article>
+
+  <div class="workflow-nav-row">
+    {% if workflow.prev_step %}<a
+      class="ghost-btn"
+      href="{{ url_for(workflow.prev_step.endpoint) }}"
+      >Previous</a
+    >{% endif %} {% if workflow.next_step %}<a
+      class="cta-btn"
+      href="{{ url_for(workflow.next_step.endpoint) }}"
+      >Next Step</a
+    >{% endif %}
+  </div>
+</section>
+
+<script id="cmLabels" type="application/json">
+  {{ cm_labels | tojson }}
+</script>
+<script id="cmMatrix" type="application/json">
+  {{ cm_matrix | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+<script>
+  const cmLabels = JSON.parse(
+    document.getElementById("cmLabels").textContent || "[]",
+  );
+  const cmMatrix = JSON.parse(
+    document.getElementById("cmMatrix").textContent || "[]",
+  );
+  if (cmLabels.length && cmMatrix.length) {
+    const flattened = [];
+    const labels = [];
+    for (let i = 0; i < cmMatrix.length; i += 1) {
+      for (let j = 0; j < cmMatrix[i].length; j += 1) {
+        labels.push(`${cmLabels[i]} -> ${cmLabels[j]}`);
+        flattened.push(cmMatrix[i][j]);
+      }
+    }
+    new Chart(document.getElementById("cmChart"), {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [
+          { label: "Counts", data: flattened, backgroundColor: "#3b82f6" },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false },
+    });
+  }
+</script>
+{% endblock %}

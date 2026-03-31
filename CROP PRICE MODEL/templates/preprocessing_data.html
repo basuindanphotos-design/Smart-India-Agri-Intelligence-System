@@ -1,0 +1,53 @@
+{% extends 'base.html' %} {% block title %}Preprocessing Data | CropAI{%
+endblock %} {% block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>Preprocessing Data</h2>
+    <p>Null-value analysis before and after preprocessing with live data.</p>
+    <div class="d-flex align-items-center gap-2">
+      <select
+        id="preDataSourceFilter"
+        class="form-select form-select-sm"
+        style="max-width: 220px"
+      >
+        <option value="real" selected>Real Data</option>
+        <option value="synthetic">Synthetic Data</option>
+        <option value="all">All Data</option>
+      </select>
+      <button id="refreshPreprocessing" class="btn btn-sm btn-outline-success">
+        Refresh Live Data
+      </button>
+      <small id="preprocessingUpdatedAt" class="text-muted"></small>
+    </div>
+    <small id="preprocessingSummary" class="text-muted d-block mt-2"></small>
+  </div>
+  <div class="glass-card p-3 mb-4">
+    <h5>Numerical Columns - Null Values Before</h5>
+    <div id="preNumBefore" class="table-responsive">
+      {{ num_before_html|safe }}
+    </div>
+  </div>
+  <div class="glass-card p-3 mb-4">
+    <h5>Categorical Columns - Null Values Before</h5>
+    <div id="preCatBefore" class="table-responsive">
+      {{ cat_before_html|safe }}
+    </div>
+  </div>
+  <div class="glass-card p-3 mb-4">
+    <h5>Numerical Columns - Null Values After</h5>
+    <div id="preNumAfter" class="table-responsive">
+      {{ num_after_html|safe }}
+    </div>
+  </div>
+  <div class="glass-card p-3 mb-4">
+    <h5>Categorical Columns - Null Values After</h5>
+    <div id="preCatAfter" class="table-responsive">
+      {{ cat_after_html|safe }}
+    </div>
+  </div>
+  <div class="glass-card p-3">
+    <h5>Head of DataFrame After Preprocessing</h5>
+    <div id="preHead" class="table-responsive">{{ head_html|safe }}</div>
+  </div>
+</section>
+{% endblock %}

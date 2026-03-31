@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Unified Farmer Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="bg-layer"></div>
+    <header class="site-header">
+      <nav class="navbar container">
+        <a class="brand" href="{{ url_for('index') }}"
+          >Smart India Agri Intelligence System</a
+        >
+        <ul class="nav-links">
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li>
+            <a href="{{ url_for('crop_recommendation_redirect') }}"
+              >Crop Recommendation</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('crop_yield_redirect') }}">Yield Predictor</a>
+          </li>
+          <li>
+            <a href="{{ url_for('crop_price_redirect') }}">Price Predictor</a>
+          </li>
+          <li>
+            <a href="{{ url_for('soil_health_redirect') }}">Soil Health</a>
+          </li>
+          <li>
+            <a class="active" href="{{ url_for('farmer_intelligence') }}"
+              >Farmer Intelligence</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="container intelligence-layout reveal">
+      <section class="intel-input">
+        <h1>Unified Farmer Intelligence</h1>
+        <p>
+          Enter your farm inputs once. The platform runs Crop Recommendation
+          Prediction -> Crop Yield Prediction -> Crop Price Prediction and
+          generates a final farmer decision.
+        </p>
+
+        <form
+          id="intelligence-form"
+          class="grid-form"
+          method="post"
+          action="{{ url_for('farmer_intelligence') }}"
+        >
+          <label
+            >Temperature (C)
+            <input type="number" step="0.1" name="temperature" required />
+          </label>
+          <label
+            >Humidity (%)
+            <input type="number" step="0.1" name="humidity" required />
+          </label>
+          <label
+            >Rainfall (mm/year)
+            <input type="number" step="0.1" name="rainfall" required />
+          </label>
+          <label
+            >Farm Area (hectares)
+            <input
+              type="number"
+              step="0.1"
+              name="farm_area_hectares"
+              required
+            />
+          </label>
+          <label
+            >Year
+            <input type="number" name="year" required />
+          </label>
+          <label
+            >Pesticides (tonnes)
+            <input type="number" step="0.1" name="pesticides_tonnes" required />
+          </label>
+          <label
+            >Season
+            <select name="season" required>
+              <option value="" selected disabled>Select Season</option>
+              {% for opt in dropdown_data.seasons %}
+              <option value="{{ opt }}">{{ opt }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label
+            >Climate Type
+            <select name="climate_type" required>
+              <option value="" selected disabled>Select Climate Type</option>
+              {% for opt in dropdown_data.climate_types %}
+              <option value="{{ opt }}">{{ opt }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label
+            >Economic Use
+            <select name="economic_use" required>
+              <option value="" selected disabled>Select Economic Use</option>
+              {% for opt in dropdown_data.economic_uses %}
+              <option value="{{ opt }}">{{ opt }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label
+            >State
+            <select name="state" id="state-select" required>
+              <option value="" selected disabled>Select State</option>
+              {% for opt in dropdown_data.states %}
+              <option value="{{ opt }}">{{ opt }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label
+            >District
+            <select name="district" id="district-select" required>
+              <option value="" selected disabled>Select District</option>
+            </select>
+          </label>
+          <label
+            >Market
+            <select name="market" id="market-select" required>
+              <option value="" selected disabled>Select Market</option>
+            </select>
+          </label>
+          <label
+            >Variety
+            <select name="variety" required>
+              <option value="" selected disabled>Select Variety</option>
+              {% for opt in dropdown_data.varieties %}
+              <option value="{{ opt }}">{{ opt }}</option>
+              {% endfor %}
+            </select>
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" class="primary-btn">
+              Run Unified Prediction
+            </button>
+          </div>
+        </form>
+
+        <div class="module-health">
+          <h3>Connected Module Status</h3>
+          <div class="health-row">
+            <span>Crop Recommendation Prediction</span>
+            <strong
+              >{{ 'Available' if module_status.crop_recommendation else 'Missing
+              app.py' }}</strong
+            >
+          </div>
+          <div class="health-row">
+            <span>Crop Yield</span>
+            <strong
+              >{{ 'Available' if module_status.crop_yield else 'Missing app.py'
+              }}</strong
+            >
+          </div>
+          <div class="health-row">
+            <span>Crop Price</span>
+            <strong
+              >{{ 'Available' if module_status.crop_price else 'Missing app.py'
+              }}</strong
+            >
+          </div>
+          <div class="health-row">
+            <span>Soil Health</span>
+            <strong
+              >{{ 'Available' if module_status.soil_health else 'Missing app.py'
+              }}</strong
+            >
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="intel-results"
+        id="result-root"
+        data-has-result="{{ '1' if result else '0' }}"
+      >
+        <div class="result-head">
+          <h2>Unified Output</h2>
+          <p>
+            Single-window farmer intelligence across recommendation, yield, and
+            market.
+          </p>
+        </div>
+
+        <div class="result-grid">
+          <article class="result-card">
+            <h3>Crop Recommendation Prediction Result</h3>
+            <p class="value" id="recommended_crop">
+              {{ result.recommended_crop if result else '--' }}
+            </p>
+            <p>Predicted Recommended Crop</p>
+          </article>
+          <article class="result-card">
+            <h3>Yield Prediction Result</h3>
+            <p class="value" id="expected_yield">
+              {{ result.expected_yield_ton_per_hectare if result else '--' }}
+            </p>
+            <p>Expected Yield (tons/hectare)</p>
+          </article>
+          <article class="result-card">
+            <h3>Price Prediction Result</h3>
+            <p class="value" id="predicted_price">
+              {{ result.predicted_price_inr_per_quintal if result else '--' }}
+            </p>
+            <p>Predicted Price (INR/quintal)</p>
+          </article>
+        </div>
+
+        <div class="analytics-grid">
+          <article class="result-card">
+            <h3>Profit Estimation</h3>
+            <p class="value" id="estimated_profit">
+              {{ result.estimated_profit_inr if result else '--' }}
+            </p>
+            <p>Estimated Profit (INR)</p>
+          </article>
+          <article class="result-card">
+            <h3>Best Market</h3>
+            <p class="value" id="best_market">
+              {{ result.best_market if result else '--' }}
+            </p>
+            <p>Suggested Market</p>
+          </article>
+        </div>
+
+        <div class="analytics-grid">
+          <article class="result-card">
+            <h3>Model Fusion Confidence</h3>
+            <p class="value" id="fusion_confidence">
+              {{ result.model_fusion.fusion_confidence if result and
+              result.model_fusion else '--' }}
+            </p>
+            <p>Combined from 3 trained models</p>
+          </article>
+          <article class="result-card">
+            <h3>Fusion Source</h3>
+            <p id="fusion_source">
+              {{ result.model_fusion.fusion_note if result and
+              result.model_fusion else 'Run unified prediction to view model
+              fusion details.' }}
+            </p>
+          </article>
+        </div>
+
+        <article class="result-card narrative-card">
+          <h3>Dynamic Input -> Processing -> Prediction</h3>
+          <p id="input_summary_text">
+            Enter farm inputs and run prediction to view interpreted input
+            summary.
+          </p>
+          <p id="processing_summary_text">
+            Processing summary from recommendation, yield, and price models will
+            appear here.
+          </p>
+          <p id="prediction_summary_text">
+            Final prediction rationale and decision guidance will appear here.
+          </p>
+        </article>
+
+        <article class="result-card">
+          <h3>Which Model Contributed Most</h3>
+          <div id="contribution_bars" class="contribution-bars"></div>
+        </article>
+
+        <div class="insight-grid">
+          <article class="result-card insight-card">
+            <h3>Recommendation Insight</h3>
+            <p id="recommendation_insight">
+              {{ ('Recommended crop: ' ~ result.recommended_crop ~ '. Crop is
+              selected from agro-climatic signals and farm profile.') if result
+              else 'Run unified prediction to view recommendation insight.' }}
+            </p>
+          </article>
+          <article class="result-card insight-card">
+            <h3>Yield Insight</h3>
+            <p id="yield_insight">
+              {{ result.raw['yield']['yield_explanation'] if result and
+              result.raw and result.raw['yield'] and
+              result.raw['yield']['yield_explanation'] else 'Run unified
+              prediction to view yield insight.' }}
+            </p>
+          </article>
+          <article class="result-card insight-card">
+            <h3>Price Insight</h3>
+            <p id="price_insight">
+              {{ ('Best market is ' ~ result.best_market ~ ' with expected price
+              trend considered in final decision.') if result else 'Run unified
+              prediction to view price insight.' }}
+            </p>
+          </article>
+        </div>
+
+        <div class="chart-grid">
+          <article class="chart-card">
+            <h3>Yield Trends</h3>
+            <canvas id="yieldChart"></canvas>
+          </article>
+          <article class="chart-card">
+            <h3>Price Trends</h3>
+            <canvas id="priceChart"></canvas>
+          </article>
+        </div>
+
+        <article class="final-decision">
+          <h3>FINAL FARMER DECISION</h3>
+          <p id="decision_text">
+            {{ result.decision_text if result else 'Run unified prediction to
+            generate a final recommendation.' }}
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script id="farmer-dropdown-data" type="application/json">
+      {{ dropdown_data|tojson }}
+    </script>
+    <script id="initial-unified-result" type="application/json">
+      {{ {
+            	'recommended_crop': result.recommended_crop,
+            	'expected_yield_ton_per_hectare': result.expected_yield_ton_per_hectare,
+            	'predicted_price_inr_per_quintal': result.predicted_price_inr_per_quintal,
+            	'best_market': result.best_market,
+            	'estimated_profit_inr': result.estimated_profit_inr,
+            	'decision_text': result.decision_text,
+            	'yield_chart': result.yield_chart,
+            	'price_chart': result.price_chart,
+            	'model_fusion': result.model_fusion,
+            	'raw': result.raw
+            }|tojson if result else 'null' }}
+    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block title %}EDA Data 2 | Crop Recommendation
+Prediction{% endblock %} {% block content %}
+<div class="container" style="padding: 24px 0 36px">
+  <div class="section-head">
+    <h1>EDA Data 2</h1>
+    <p>Scatter and trend analysis driven by current trained data.</p>
+    <p class="weather-updated">Updated: {{ updated_at }}</p>
+  </div>
+  <div class="chart-grid">
+    <article class="chart-card">
+      <h3>Scatter Plot: Area vs Yield</h3>
+      <canvas id="scatterChart"></canvas>
+    </article>
+    <article class="chart-card">
+      <h3>Yearly Yield Trend</h3>
+      <canvas id="yearTrendChart"></canvas>
+    </article>
+  </div>
+</div>
+{% endblock %} {% block extra_scripts %}
+<script>
+  const sx = {{ scatter_x | tojson }};
+  const sy = {{ scatter_y | tojson }};
+  const monthly = {{ monthly | tojson }};
+  new Chart(document.getElementById('scatterChart'), {
+    type:'scatter',
+    data:{datasets:[{label:'Area vs Yield', data:sx.map((x,i)=>({x:x, y:sy[i]})), backgroundColor:'rgba(42,157,86,0.5)'}]},
+    options:{responsive:true, maintainAspectRatio:false}
+  });
+  new Chart(document.getElementById('yearTrendChart'), {
+    type:'line',
+    data:{labels:monthly.map(r=>r[0]), datasets:[{label:'Avg Yield', data:monthly.map(r=>r[1]), borderColor:'#2563eb', fill:true, backgroundColor:'rgba(37,99,235,0.2)'}]},
+    options:{responsive:true, maintainAspectRatio:false}
+  });
+</script>
+{% endblock %}

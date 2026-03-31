@@ -1,0 +1,10 @@
+# Ignore model files
+*.pkl
+*.joblib
+*.h5
+
+# Ignore datasets (optional)
+*.csv
+
+# Ignore large files
+*.mp4

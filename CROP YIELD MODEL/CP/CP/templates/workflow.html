@@ -1,0 +1,101 @@
+{% extends 'base.html' %} {% block content %}
+<section class="section-pad">
+  <div class="container">
+    <div class="mb-4">
+      <h1 class="display-6 fw-bold">Project Workflow</h1>
+      <p class="text-muted">
+        End-to-end machine learning pipeline from raw data to deployment-ready
+        prediction service.
+      </p>
+    </div>
+
+    <div class="pipeline-grid">
+      <button class="pipeline-step active" data-step-target="step1">
+        1. Dataset Collection
+      </button>
+      <button class="pipeline-step" data-step-target="step2">
+        2. Data Preprocessing
+      </button>
+      <button class="pipeline-step" data-step-target="step3">
+        3. Exploratory Data Analysis
+      </button>
+      <button class="pipeline-step" data-step-target="step4">
+        4. Feature Engineering
+      </button>
+      <button class="pipeline-step" data-step-target="step5">
+        5. Model Training
+      </button>
+      <button class="pipeline-step" data-step-target="step6">
+        6. Model Evaluation
+      </button>
+      <button class="pipeline-step" data-step-target="step7">
+        7. Prediction System
+      </button>
+      <button class="pipeline-step" data-step-target="step8">
+        8. Web Deployment
+      </button>
+    </div>
+
+    <div class="card panel-card mt-4">
+      <div class="card-body p-4">
+        <div id="step1" class="workflow-detail active">
+          <h3>Dataset Collection</h3>
+          <p>
+            Collected crop, rainfall, pesticide, temperature, and yield records
+            across countries and years to capture broad agricultural patterns.
+          </p>
+        </div>
+        <div id="step2" class="workflow-detail">
+          <h3>Data Preprocessing</h3>
+          <p>
+            Cleaned missing values, standardized schema, and prepared
+            categorical and numerical fields for model-ready transformation.
+          </p>
+        </div>
+        <div id="step3" class="workflow-detail">
+          <h3>Exploratory Data Analysis</h3>
+          <p>
+            Identified variable distributions, outliers, and interactions among
+            rainfall, temperature, pesticide usage, and crop output.
+          </p>
+        </div>
+        <div id="step4" class="workflow-detail">
+          <h3>Feature Engineering</h3>
+          <p>
+            Selected predictive features and structured them for preprocessing
+            pipelines to ensure consistent training and inference behavior.
+          </p>
+        </div>
+        <div id="step5" class="workflow-detail">
+          <h3>Model Training</h3>
+          <p>
+            Trained regression model using transformed features and validated
+            generalization performance on held-out samples.
+          </p>
+        </div>
+        <div id="step6" class="workflow-detail">
+          <h3>Model Evaluation</h3>
+          <p>
+            Measured R2, MAE, and RMSE and compared against baseline to validate
+            predictive value beyond naive estimators.
+          </p>
+        </div>
+        <div id="step7" class="workflow-detail">
+          <h3>Prediction System</h3>
+          <p>
+            Integrated model and preprocessor into Flask API endpoints for
+            real-time crop yield prediction and interpretation.
+          </p>
+        </div>
+        <div id="step8" class="workflow-detail">
+          <h3>Web Deployment</h3>
+          <p>
+            Delivered a responsive multi-page analytics dashboard for
+            demonstrations and decision support across devices.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

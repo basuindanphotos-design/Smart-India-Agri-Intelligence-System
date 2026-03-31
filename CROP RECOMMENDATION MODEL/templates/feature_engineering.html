@@ -1,0 +1,110 @@
+{% extends "base.html" %} {% block title %}Feature Engineering | Project
+Workflow{% endblock %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/workflow.css') }}"
+/>
+{% endblock %} {% block content %}
+<section class="container workflow-shell">
+  <div class="workflow-meta">
+    <span>Step {{ workflow.step_number }} of {{ workflow.step_total }}</span>
+    <h1>Feature Engineering</h1>
+    <p>
+      Engineered crop attributes and feature impact on yield and recommendation
+      quality.
+    </p>
+  </div>
+
+  <article class="about" style="margin-bottom: 16px">
+    <h3>Engineered Feature Categories</h3>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Unique Values</th>
+            <th>Examples</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in engineered_summary %}
+          <tr>
+            <td>{{ row.feature }}</td>
+            <td>{{ row.unique_values }}</td>
+            <td>{{ row.examples }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="chart-card" style="margin-bottom: 16px">
+    <h3>Feature Importance (Random Forest Regressor)</h3>
+    <canvas id="importanceChart"></canvas>
+  </article>
+
+  <div class="market-grid">
+    <article class="info-card">
+      <h3>NPK Nutrients / Input Surrogates</h3>
+      <p>
+        In this project, fertilizer and pesticide usage along with area and
+        climate-profile features form the strongest agronomic signal set.
+      </p>
+    </article>
+    <article class="info-card">
+      <h3>Climate Factors</h3>
+      <p>
+        Season, climate type, water source, and humidity proxies guide crop
+        suitability and stress risk behavior.
+      </p>
+    </article>
+    <article class="info-card">
+      <h3>Soil and Farm Context</h3>
+      <p>
+        Farming system, crop duration type, and economic use encode practical
+        field constraints and market intent.
+      </p>
+    </article>
+  </div>
+
+  <div class="workflow-nav-row">
+    {% if workflow.prev_step %}<a
+      class="ghost-btn"
+      href="{{ url_for(workflow.prev_step.endpoint) }}"
+      >Previous</a
+    >{% endif %} {% if workflow.next_step %}<a
+      class="cta-btn"
+      href="{{ url_for(workflow.next_step.endpoint) }}"
+      >Next Step</a
+    >{% endif %}
+  </div>
+</section>
+
+<script id="importanceData" type="application/json">
+  {{ importance | tojson }}
+</script>
+{% endblock %} {% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/workflow.js') }}"></script>
+<script>
+  const imp = JSON.parse(
+    document.getElementById("importanceData").textContent || "[]",
+  );
+  if (imp.length) {
+    new Chart(document.getElementById("importanceChart"), {
+      type: "bar",
+      data: {
+        labels: imp.map((x) => x.feature),
+        datasets: [
+          {
+            label: "Importance",
+            data: imp.map((x) => x.importance),
+            backgroundColor: "#f59e0b",
+          },
+        ],
+      },
+      options: { responsive: true, maintainAspectRatio: false, indexAxis: "y" },
+    });
+  }
+</script>
+{% endblock %}

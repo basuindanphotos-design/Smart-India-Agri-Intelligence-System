@@ -1,0 +1,43 @@
+{% extends 'base.html' %} {% block title %}Upload Files | CropAI{% endblock %}
+{% block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>Upload the Files</h2>
+    <p>Upload your latest dataset and retrain the model in real time.</p>
+  </div>
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="glass-card p-4">
+        <form id="uploadForm" class="d-flex flex-column gap-3">
+          <label class="form-label">Select CSV File</label>
+          <input
+            type="file"
+            name="dataset_file"
+            class="form-control"
+            accept=".csv"
+            required
+          />
+          <button type="submit" class="btn btn-accent">
+            Upload and Retrain
+          </button>
+          <small id="uploadMessage" class="text-muted"></small>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="glass-card p-4">
+        <h5>Current Dataset Snapshot</h5>
+        <ul class="list-unstyled mb-0">
+          <li>Rows: <strong>{{ info.rows }}</strong></li>
+          <li>Columns: <strong>{{ info.columns }}</strong></li>
+          <li>States: <strong>{{ info.states }}</strong></li>
+          <li>Markets: <strong>{{ info.markets }}</strong></li>
+          <li>Commodities: <strong>{{ info.commodities }}</strong></li>
+          <li>Real Rows: <strong>{{ info.real_rows }}</strong></li>
+          <li>Synthetic Rows: <strong>{{ info.synthetic_rows }}</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

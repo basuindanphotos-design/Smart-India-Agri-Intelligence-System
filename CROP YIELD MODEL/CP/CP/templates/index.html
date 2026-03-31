@@ -1,0 +1,175 @@
+{% extends 'base.html' %} {% block content %}
+<section class="section-pad pt-4 home-hero-wrap">
+  <div class="container">
+    <div class="hero-shell p-4 p-lg-5 mb-4">
+      <div class="row g-4 align-items-end">
+        <div class="col-lg-8">
+          <div class="hero-badge">Industry Crop Yield Prediction Platform</div>
+          <h1 class="display-5 fw-bold mb-3">Crop Yield Prediction</h1>
+          <p class="mb-4 opacity-75 hero-copy">
+            Predict crop outcomes with machine learning trained on merged Indian
+            agricultural datasets, then translate model output into actionable
+            production insights.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <a
+              href="{{ url_for('predict_page') }}"
+              class="btn btn-cta btn-lg px-4"
+              >Start Prediction</a
+            >
+            <a
+              href="{{ url_for('dataset_page') }}"
+              class="btn btn-outline-light btn-lg px-4"
+              >Explore Dataset Insights</a
+            >
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="hero-mini-panel">
+            <p class="mini-title">Operational Snapshot</p>
+            <div class="mini-grid">
+              <div>
+                <span>Records</span>
+                <h4 data-counter-target="{{ summary_stats.total_records }}">
+                  0
+                </h4>
+              </div>
+              <div>
+                <span>Crops</span>
+                <h4 data-counter-target="{{ summary_stats.total_crops }}">0</h4>
+              </div>
+              <div>
+                <span>Regions</span>
+                <h4 data-counter-target="{{ summary_stats.countries_covered }}">
+                  0
+                </h4>
+              </div>
+              <div>
+                <span>Features</span>
+                <h4 data-counter-target="{{ summary_stats.feature_count }}">
+                  0
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-illustration">
+      <div class="hero-illustration-overlay">
+        <div class="hero-visual-card hero-visual-card--primary">
+          <p class="hero-visual-label">Crop Yield Intelligence Layer</p>
+          <h3>Prediction, Benchmarking, and Field Guidance in One Flow</h3>
+          <p>
+            Connect crop inputs, regional data, and model output to generate
+            production-ready recommendations.
+          </p>
+          <div class="hero-chip-row">
+            <span>Yield Forecasting</span>
+            <span>Risk Signals</span>
+            <span>Knowledgeable Insight</span>
+          </div>
+        </div>
+
+        <div class="hero-visual-card hero-visual-card--stats">
+          <div>
+            <p class="hero-visual-label">Benchmark Models</p>
+            <strong>CatBoost</strong>
+          </div>
+          <div>
+            <p class="hero-visual-label">Best R2</p>
+            <strong>0.9823</strong>
+          </div>
+          <div>
+            <p class="hero-visual-label">Top Module</p>
+            <strong>Knowledgeable Farmer Insight</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PLATFORM CAPABILITIES ===== -->
+<section class="section-pad pt-0">
+  <div class="container">
+    <div class="section-header mb-4">
+      <span class="section-eyebrow">Platform Strengths</span>
+      <h2 class="h2 fw-bold mb-2">
+        Built for Reliable Agricultural Intelligence
+      </h2>
+      <p class="text-muted mb-0">
+        Engineering decisions that make outcomes trustworthy.
+      </p>
+    </div>
+    <div class="row g-3">
+      <div class="col-sm-6 col-lg-4">
+        <div class="capability-card">
+          <i class="bi bi-layers"></i>
+          <h4>3-Source Dataset Fusion</h4>
+          <p>
+            State yield records, historical weather, and agrochemical input data
+            merged into one consistent training corpus.
+          </p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="capability-card">
+          <i class="bi bi-trophy"></i>
+          <h4>CatBoost Champion Model</h4>
+          <p>
+            Benchmarked against XGBoost, LightGBM, RandomForest, ExtraTrees, and
+            Stacking — CatBoost achieved R² = 0.982261.
+          </p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="capability-card">
+          <i class="bi bi-grid-1x2"></i>
+          <h4>21 Agronomic Features</h4>
+          <p>
+            Includes rainfall, temperature, humidity, soil pH,
+            Nitrogen/Phosphorus requirement, solar radiation, wind speed, and
+            more.
+          </p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="capability-card">
+          <i class="bi bi-geo-alt"></i>
+          <h4>State-Level Granularity</h4>
+          <p>
+            Per-crop MAE and per-state MAE breakdowns ensure predictions are
+            reliable at both agronomic and geographic resolution.
+          </p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="capability-card">
+          <i class="bi bi-shield-fill-check"></i>
+          <h4>Zero Leakage Validation</h4>
+          <p>
+            80/20 stratified split with column consistency verification and zero
+            missing values in the final training matrix.
+          </p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-4">
+        <div class="capability-card">
+          <i class="bi bi-braces"></i>
+          <h4>REST Prediction API</h4>
+          <p>
+            POST /api/predict endpoint returns structured JSON with yield,
+            production estimate, and explanation fields for integration.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  window.APP_DATA = null;
+</script>
+{% endblock %}

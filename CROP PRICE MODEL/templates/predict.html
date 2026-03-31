@@ -1,0 +1,531 @@
+{% extends 'base.html' %} {% block title %}Predict | Crop Price Model{% endblock
+%} {% block content %}
+<section class="page-section container py-5">
+  <div class="section-head mt-4">
+    <h2>Crop Price Prediction</h2>
+    <p>Predict future modal crop price using model intelligence.</p>
+    <div class="d-flex align-items-center gap-3 flex-wrap small">
+      <label class="form-check-label d-flex align-items-center gap-2 mb-0">
+        <input
+          id="predictAutoSync"
+          class="form-check-input"
+          type="checkbox"
+          checked
+        />
+        Auto-sync options every 30s (prediction stays manual)
+      </label>
+      <span id="predictAutoSyncStatus" class="text-muted"
+        >Auto-sync active (options only)</span
+      >
+    </div>
+    <small id="predictOptionsUpdatedAt" class="text-muted"></small>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="glass-card p-4">
+        <form id="predictForm" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">State</label>
+            <select name="state" class="form-select" required></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">District</label>
+            <select name="district" class="form-select" required></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Market</label>
+            <select name="market" class="form-select" required></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Commodity</label>
+            <select name="commodity" class="form-select" required></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Variety</label>
+            <select name="variety" class="form-select" required></select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Arrival Date</label>
+            <input
+              name="arrival_date"
+              type="text"
+              class="form-control"
+              autocomplete="off"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Minimum Price (₹/ton)</label>
+            <input
+              name="min_price"
+              type="number"
+              step="0.01"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Maximum Price (₹/ton)</label>
+            <input
+              name="max_price"
+              type="number"
+              step="0.01"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-accent w-100">
+              Predict Price
+            </button>
+            <small class="text-muted d-block mt-2 text-center">
+              Every prediction result is saved below in Result Prediction Data.
+            </small>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="glass-card p-4 h-100">
+        <h5 class="mb-3">Prediction Results</h5>
+        <p class="text-muted small mb-4">Live model inference output</p>
+        <div id="predictResultEmpty" class="text-center py-5">
+          <i
+            class="fa-solid fa-leaf"
+            style="
+              font-size: 3rem;
+              color: #ccc;
+              margin-bottom: 1rem;
+              display: block;
+            "
+          ></i>
+          <p class="text-muted">
+            Fill the form and click <strong>Predict Price</strong> to see
+            results here.
+          </p>
+        </div>
+        <div id="predictResultContent" class="d-none">
+          <div class="result-card">
+            <h6 class="mb-2">Expected Price</h6>
+            <p id="resultPrice" class="display-price mb-0">₹ 0.00 / ton</p>
+          </div>
+          <div class="panel-card mt-3">
+            <h6 class="mb-2">Current Market Price</h6>
+            <p id="resultCurrentPrice" class="mb-0">₹ 0.00 / ton</p>
+          </div>
+          <div class="panel-card mt-3">
+            <h6 class="mb-2">Price Difference (Expected vs Current)</h6>
+            <p id="resultPriceDiff" class="mb-0">₹ 0.00 / ton</p>
+          </div>
+          <div class="panel-card mt-3">
+            <h6 class="mb-2">Recommendation</h6>
+            <div id="resultRecommendation" class="small"></div>
+          </div>
+          <div class="panel-card mt-3">
+            <h6 class="mb-2">Confidence Level</h6>
+            <div class="progress" style="height: 20px">
+              <div id="resultConfidence" class="progress-bar" style="width: 0%">
+                0%
+              </div>
+            </div>
+          </div>
+          <div class="panel-card mt-3">
+            <h6 class="mb-2">Price Forecast Band</h6>
+            <div id="resultBand" class="small">--</div>
+          </div>
+          <div class="panel-card mt-3">
+            <h6 class="mb-2">Price Trend Analysis</h6>
+            <div id="resultTrendAnalysis" class="small">--</div>
+          </div>
+          <div class="panel-card mt-3">
+            <h6 class="mb-2">Market Signal</h6>
+            <div id="resultMarketSignal" class="small">--</div>
+          </div>
+          <div class="panel-card mt-3">
+            <h6 class="mb-2">Best Nearby Market</h6>
+            <div id="resultBestMarket" class="small">--</div>
+          </div>
+          <div class="panel-card mt-3">
+            <h6 class="mb-2">Reference Data Points</h6>
+            <div id="resultDataPoints" class="small">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4 g-3">
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-card">
+        <i
+          class="fa-solid fa-circle-check"
+          style="
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+          "
+        ></i>
+        <h6 class="mb-1">Current Selection</h6>
+        <div class="small text-muted">
+          <div id="metricCrop">Commodity: --</div>
+          <div id="metricMarket">Market: --</div>
+          <div id="metricRegion">Region: --</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-card">
+        <i
+          class="fa-solid fa-square-poll-horizontal"
+          style="
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+          "
+        ></i>
+        <h6 class="mb-1">Market Snapshot</h6>
+        <div class="small text-muted">
+          <div id="metricRangeLabel">Real Price Range: --</div>
+          <div id="metricDateLabel">Latest Arrival: --</div>
+          <div id="metricVarietyLabel">Variety: --</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-card">
+        <i
+          class="fa-solid fa-database"
+          style="
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+          "
+        ></i>
+        <h6 class="mb-1">Price Prediction Signals</h6>
+        <div class="small text-muted">
+          <div id="metricDataPoints">Current Price: --</div>
+          <div id="metricMarkets">Expected Price: --</div>
+          <div id="metricCommodities">Gap: --</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="metric-card">
+        <i
+          class="fa-solid fa-heartbeat"
+          style="
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+          "
+        ></i>
+        <h6 class="mb-1">Model Health</h6>
+        <div class="small text-muted">
+          <div id="metricAccuracy">Accuracy: --</div>
+          <div id="metricCoverage">Coverage: --</div>
+          <div id="metricModelSignal">Signal: --</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Analysis Sections -->
+  <div class="row mt-4 g-3 d-none" id="analysisSection">
+    <!-- Price Analysis Card -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">📊 Price Analysis</h5>
+        <div class="small">
+          <div class="d-flex justify-content-between mb-2">
+            <span>Historical Market Range:</span>
+            <strong id="analysisRange">₹ --</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Average Price (Historical):</span>
+            <strong id="analysisAvg">₹ --</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Predicted vs Market:</span>
+            <strong id="analysisDiff">-- %</strong>
+          </div>
+          <div class="d-flex justify-content-between mb-2">
+            <span>Price Volatility Index:</span>
+            <strong id="analysisVolatility">-- %</strong>
+          </div>
+          <div
+            class="mt-3 p-2"
+            style="background: rgba(255, 255, 255, 0.1); border-radius: 5px"
+          >
+            <small id="analysisInsight">Loading insights...</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk Assessment Card -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">⚠️ Risk Assessment</h5>
+        <div class="small">
+          <div class="d-flex align-items-center mb-2">
+            <span class="flex-grow-1">Market Concentration Risk:</span>
+            <span id="riskConcentration" class="badge bg-warning">--</span>
+          </div>
+          <div class="d-flex align-items-center mb-2">
+            <span class="flex-grow-1">Data Availability:</span>
+            <span id="riskData" class="badge bg-info">--</span>
+          </div>
+          <div class="d-flex align-items-center mb-2">
+            <span class="flex-grow-1">Seasonal Risk:</span>
+            <span id="riskSeasonal" class="badge bg-success">--</span>
+          </div>
+          <div class="d-flex align-items-center mb-2">
+            <span class="flex-grow-1">Overall Risk Level:</span>
+            <span id="riskOverall" class="badge bg-danger">HIGH</span>
+          </div>
+          <div
+            class="mt-3 p-2"
+            style="background: rgba(255, 255, 255, 0.1); border-radius: 5px"
+          >
+            <small id="riskAdvice"
+              >Verify with local market before decision...</small
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profit Calculator Card -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">💰 Profit Calculator</h5>
+        <div class="small">
+          <div class="mb-2">
+            <label class="form-label">Quantity (Tons):</label>
+            <input
+              id="profitQty"
+              type="number"
+              class="form-control form-control-sm"
+              min="0"
+              placeholder="0"
+            />
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Production Cost (₹/ton):</label>
+            <input
+              id="profitCost"
+              type="number"
+              class="form-control form-control-sm"
+              min="0"
+              placeholder="0"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Transport Cost (₹/ton):</label>
+            <input
+              id="profitTransport"
+              type="number"
+              class="form-control form-control-sm"
+              min="0"
+              placeholder="0"
+            />
+          </div>
+          <div
+            class="p-2"
+            style="background: rgba(46, 187, 50, 0.2); border-radius: 5px"
+          >
+            <div class="d-flex justify-content-between mb-2">
+              <span>Expected Revenue:</span>
+              <strong id="profitRevenue">₹ 0</strong>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Total Cost:</span>
+              <strong id="profitTotalCost">₹ 0</strong>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>Net Profit/Loss:</span>
+              <strong id="profitNet" style="font-size: 1.1em; color: #2e7d32"
+                >₹ 0</strong
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seasonal Analysis Card -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">📅 Seasonal Analysis</h5>
+        <div class="small">
+          <div class="mb-2">
+            <span class="d-block mb-1">Current Month Position:</span>
+            <div id="seasonalPosition">--</div>
+          </div>
+          <div class="mb-2">
+            <span class="d-block mb-1">Peak Season Price:</span>
+            <strong id="seasonalPeak">₹ --</strong>
+          </div>
+          <div class="mb-2">
+            <span class="d-block mb-1">Low Season Price:</span>
+            <strong id="seasonalLow">₹ --</strong>
+          </div>
+          <div class="mb-2">
+            <span class="d-block mb-1">Seasonal Variation:</span>
+            <strong id="seasonalVariation">-- %</strong>
+          </div>
+          <div
+            class="mt-3 p-2"
+            style="background: rgba(255, 255, 255, 0.1); border-radius: 5px"
+          >
+            <small id="seasonalAdvice"
+              >Check seasonal trends before selling...</small
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Comparison Card -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">🏪 Market Comparison</h5>
+        <div class="small">
+          <div class="mb-2">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Selected Market:</span>
+              <span id="compSelected">--</span>
+            </div>
+            <div class="progress" style="height: 12px">
+              <div
+                id="compSelectedBar"
+                class="progress-bar"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+          <div class="mb-2">
+            <div class="d-flex justify-content-between mb-1">
+              <span>Best Market Option:</span>
+              <span id="compBest">--</span>
+            </div>
+            <div class="progress" style="height: 12px">
+              <div
+                id="compBestBar"
+                class="progress-bar bg-success"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+          <div
+            class="mt-3 p-2"
+            style="background: rgba(255, 255, 255, 0.1); border-radius: 5px"
+          >
+            <small id="compAdvice">Similar price in nearby markets.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historical Performance Card -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">📈 Historical Performance</h5>
+        <canvas id="historicalChart" height="100"></canvas>
+        <div class="small text-center mt-2" id="historicalStats">--</div>
+      </div>
+    </div>
+
+    <!-- Education & Tips Card -->
+    <div class="col-12">
+      <div class="glass-card p-4">
+        <h5 class="mb-3">💡 Farmer Insights & Tips</h5>
+        <div class="row g-2">
+          <div id="educationTipsContainer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Coverage Report -->
+  <div class="row mt-4 g-3 d-none" id="coverageSection"></div>
+
+  <div class="row mt-4">
+    <div class="col-12">
+      <div class="glass-card p-4 predict-history-card">
+        <div
+          class="d-flex justify-content-between align-items-start flex-wrap gap-3"
+        >
+          <div>
+            <h4 class="mb-2">Result Prediction Data</h4>
+            <p class="text-muted mb-0">
+              Every prediction run (inputs + outputs) is saved locally in your
+              browser. You can import prior records and continue analysis.
+            </p>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <input
+              id="predictHistoryImportInput"
+              type="file"
+              accept=".csv"
+              class="d-none"
+            />
+            <button
+              id="importPredictHistoryBtn"
+              class="btn btn-outline-success"
+              type="button"
+            >
+              <i class="fa-solid fa-upload me-1"></i>Import CSV
+            </button>
+            <button
+              id="exportPredictHistoryBtn"
+              class="btn btn-outline-secondary"
+              type="button"
+            >
+              <i class="fa-solid fa-download me-1"></i>Export CSV
+            </button>
+            <button
+              id="clearPredictHistoryBtn"
+              class="btn btn-outline-danger"
+              type="button"
+            >
+              <i class="fa-regular fa-trash-can me-1"></i>Clear
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive mt-3">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>State</th>
+                <th>District</th>
+                <th>Market</th>
+                <th>Commodity</th>
+                <th>Variety</th>
+                <th>Arrival Date</th>
+                <th>Min Price</th>
+                <th>Max Price</th>
+                <th>Expected Price</th>
+                <th>Current Price</th>
+                <th>Decision</th>
+                <th>Confidence</th>
+              </tr>
+            </thead>
+            <tbody id="predictHistoryTableBody">
+              <tr>
+                <td colspan="13" class="text-center text-muted py-3">
+                  No prediction records yet.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

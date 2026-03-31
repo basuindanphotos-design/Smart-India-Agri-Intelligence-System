@@ -1,0 +1,128 @@
+{% extends 'base.html' %} {% block title %}Crop Price Recommendation Workflow{%
+endblock %} {% block content %}
+<section class="page-section workflow-page py-5">
+  <div class="container-fluid px-lg-4">
+    <div class="workflow-hero reveal-up">
+      <p class="workflow-eyebrow">Crop Price Recommendation System</p>
+      <h1>Project Workflow</h1>
+      <p>
+        Complete AI pipeline for crop price recommendation from dataset
+        preparation to deployment. Click any stage to explore implementation
+        details.
+      </p>
+    </div>
+
+    <div class="workflow-grid">
+      <article class="workflow-card reveal-up" style="animation-delay: 0.05s">
+        <span class="workflow-step">Step 1</span>
+        <div class="workflow-icon"><i class="fa-solid fa-database"></i></div>
+        <h3>Dataset Collection</h3>
+        <p>
+          Collect and upload mandi crop price data to build the active training
+          dataset.
+        </p>
+        <a href="{{ url_for('upload_files_page') }}" class="workflow-link"
+          >View Details <i class="fa-solid fa-arrow-right"></i
+        ></a>
+      </article>
+
+      <article class="workflow-card reveal-up" style="animation-delay: 0.1s">
+        <span class="workflow-step">Step 2</span>
+        <div class="workflow-icon"><i class="fa-solid fa-filter"></i></div>
+        <h3>Data Preprocessing</h3>
+        <p>
+          Handle missing values, normalize field formats, and prepare clean
+          model-ready records.
+        </p>
+        <a href="{{ url_for('preprocessing_data_page') }}" class="workflow-link"
+          >View Details <i class="fa-solid fa-arrow-right"></i
+        ></a>
+      </article>
+
+      <article class="workflow-card reveal-up" style="animation-delay: 0.15s">
+        <span class="workflow-step">Step 3</span>
+        <div class="workflow-icon">
+          <i class="fa-solid fa-chart-column"></i>
+        </div>
+        <h3>Exploratory Data Analysis</h3>
+        <p>
+          Analyze crop-wise price behavior, seasonal patterns, and market-level
+          trends.
+        </p>
+        <a href="{{ url_for('eda_data_page') }}" class="workflow-link"
+          >View Details <i class="fa-solid fa-arrow-right"></i
+        ></a>
+      </article>
+
+      <article class="workflow-card reveal-up" style="animation-delay: 0.2s">
+        <span class="workflow-step">Step 4</span>
+        <div class="workflow-icon"><i class="fa-solid fa-gears"></i></div>
+        <h3>Feature Engineering</h3>
+        <p>
+          Build structured inputs such as state, market, commodity, and time
+          features for learning.
+        </p>
+        <a href="{{ url_for('basic_info_page') }}" class="workflow-link"
+          >View Details <i class="fa-solid fa-arrow-right"></i
+        ></a>
+      </article>
+
+      <article class="workflow-card reveal-up" style="animation-delay: 0.25s">
+        <span class="workflow-step">Step 5</span>
+        <div class="workflow-icon"><i class="fa-solid fa-microchip"></i></div>
+        <h3>Model Training</h3>
+        <p>
+          Train and compare multiple machine learning models for robust crop
+          price prediction.
+        </p>
+        <a href="{{ url_for('models_data_page') }}" class="workflow-link"
+          >View Details <i class="fa-solid fa-arrow-right"></i
+        ></a>
+      </article>
+
+      <article class="workflow-card reveal-up" style="animation-delay: 0.3s">
+        <span class="workflow-step">Step 6</span>
+        <div class="workflow-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <h3>Model Evaluation</h3>
+        <p>
+          Validate prediction quality, reliability, and performance indicators
+          on the testing workflow.
+        </p>
+        <a href="{{ url_for('test_application_page') }}" class="workflow-link"
+          >View Details <i class="fa-solid fa-arrow-right"></i
+        ></a>
+      </article>
+
+      <article class="workflow-card reveal-up" style="animation-delay: 0.35s">
+        <span class="workflow-step">Step 7</span>
+        <div class="workflow-icon"><i class="fa-solid fa-bullseye"></i></div>
+        <h3>Decision Support Insights</h3>
+        <p>
+          Convert predictions into practical actions with sell/wait signals,
+          confidence scoring, and market-focused guidance.
+        </p>
+        <a
+          href="{{ url_for('decision_support_insights_page') }}"
+          class="workflow-link"
+          >View Details <i class="fa-solid fa-arrow-right"></i
+        ></a>
+      </article>
+
+      <article class="workflow-card reveal-up" style="animation-delay: 0.4s">
+        <span class="workflow-step">Step 8</span>
+        <div class="workflow-icon"><i class="fa-solid fa-gauge-high"></i></div>
+        <h3>Live Monitoring &amp; Optimization</h3>
+        <p>
+          Track model behavior in production, monitor dashboard usage, and
+          continuously improve prediction quality with fresh data.
+        </p>
+        <a
+          href="{{ url_for('live_monitoring_optimization_page') }}"
+          class="workflow-link"
+          >View Details <i class="fa-solid fa-arrow-right"></i
+        ></a>
+      </article>
+    </div>
+  </div>
+</section>
+{% endblock %}
